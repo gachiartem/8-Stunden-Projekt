@@ -1,0 +1,67 @@
+<div class="p-6">
+    <div class="flex justify-between items-center mb-8">
+        <h2 class="text-2xl font-black italic tracking-tighter text-gray-900 uppercase">Налаштування</h2>
+        <button class="text-gray-400 hover:text-orange-500 transition-colors text-2xl"
+                onclick="document.getElementById('filter-modal').classList.add('hidden')">
+            &times;
+        </button>
+    </div>
+
+    <form hx-get="{% if current_category %}{% url 'main:catalog' current_category %}{% else %}{% url 'main:catalog_all' %}{% endif %}" 
+          hx-target="#main-content" 
+          hx-push-url="true"
+          hx-on::after-request="document.getElementById('filter-modal').classList.add('hidden')">
+        <input type="hidden" name="q" value="{{ filter_params.q|default:'' }}">
+        
+        <div class="space-y-6">
+            <div>
+                <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Пошук по складу</h3>
+                <input type="text" 
+                name="description" 
+                value="{{ filter_params.description|default:'' }}" 
+                placeholder="Наприклад: томати, моцарела..."
+                class="w-full bg-gray-50 border-2 border-transparent rounded-2xl py-3 px-4 text-sm focus:bg-white focus:border-orange-500 outline-none transition-all">
+            </div>
+
+            <div>
+                <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Ціновий діапазон</h3>
+                <div class="grid grid-cols-2 gap-3">
+                    <input type="number" 
+                           name="min_price" 
+                           value="{{ filter_params.min_price|default:'' }}" 
+                           placeholder="Від ₴" 
+                           class="bg-gray-50 border-2 border-transparent rounded-2xl py-3 px-4 text-sm focus:bg-white focus:border-orange-500 outline-none transition-all">
+                    <input type="number" 
+                           name="max_price" 
+                           value="{{ filter_params.max_price|default:'' }}" 
+                           placeholder="До ₴" 
+                           class="bg-gray-50 border-2 border-transparent rounded-2xl py-3 px-4 text-sm focus:bg-white focus:border-orange-500 outline-none transition-all">
+                </div>
+            </div>
+
+            <div>
+                <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Діаметр піци</h3>
+                <select name="size" class="w-full bg-gray-50 border-2 border-transparent rounded-2xl py-3 px-4 text-sm focus:bg-white focus:border-orange-500 outline-none transition-all cursor-pointer">
+                    <option value="">Будь-який розмір</option>
+                    {% for size in sizes %}
+                    <option value="{{ size.name }}" {% if filter_params.size == size.name %}selected{% endif %}>
+                        {{ size.name|upper }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="pt-6 flex gap-3">
+                <button type="button" 
+                        class="flex-1 border-2 border-gray-100 py-3 rounded-full text-sm font-bold uppercase hover:bg-gray-50 transition-all"
+                        onclick="document.getElementById('filter-modal').classList.add('hidden')">
+                    Скасувати
+                </button>
+                <button type="submit" 
+                        class="flex-1 bg-orange-500 text-white py-3 rounded-full text-sm font-bold uppercase hover:bg-orange-600 shadow-lg shadow-orange-500/20 transition-all">
+                    Застосувати
+                </button>
+            </div>
+        </div>
+    </form>
+</div>

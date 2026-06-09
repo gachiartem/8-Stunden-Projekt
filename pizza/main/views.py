@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404
-from django.views.generic import TemplateView, DetailView
+from django.views.generic import TemplateView, DetailView, ListView
 from django.http import HttpResponse
 from django.template.response import TemplateResponse
 from .models import Category,Product,Size
@@ -14,23 +14,24 @@ class IndexView(TemplateView):
         context = super().get_context_data(**kwargs)
         context['categories'] = Category.objects.all()
         context['current_category'] = None
-        return
+        return context
     
 
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
         if request.headers.get('HX-Request'):
-            return TemplateResponse(request, 'main/home_context.html', context)
+            return TemplateResponse(request, 'main/home_content.html', context)
         return TemplateResponse(request, self.template_name, context)
     
 
 class CatalogView(TemplateView):
-    template = 'main/base.html'
+    template_name = 'main/base.html'
 
     FILTER_MAPPING = {
-        'min_price': lambda queryset, value:queryset.filter(price_gte=value),
-        'max_price': lambda queryset, value:queryset.filter(price_lte=value),
-        'size': lambda queryset, value:queryset.filter(product_size__size__name=value),
+        'min_price': lambda queryset, value:queryset.filter(price__gte=value),
+        'max_price': lambda queryset, value:queryset.filter(price__lte=value),
+        'size': lambda queryset, value:queryset.filter(product_sizes__size__name=value),
+        'description': lambda queryset, value: queryset.filter(description__icontains=value),
     }
 
 
@@ -56,7 +57,7 @@ class CatalogView(TemplateView):
             value = self.request.GET.get(param)
             if value:
                 products = filter_func(products, value)
-                filter_param[param] = value
+                filter_params[param] = value
             else:
                 filter_params[param] = ''
 
@@ -64,7 +65,7 @@ class CatalogView(TemplateView):
 
 
         context.update({
-            'category': categories,
+            'categories': categories,
             'products': products,
             'current_category': category_slug,
             'filter_params': filter_params,
@@ -91,26 +92,33 @@ class CatalogView(TemplateView):
         return TemplateResponse(request, self.template_name, context)
     
 
-    class ProductDetailView(DetailView):
+class ProductDetailView(DetailView):
         model = Product
         template_name = 'main/base.html'
         slug_field = 'slug'
         slug_url_kwarg = 'slug'
 
 
-    def get_context_date(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        product = self.get_object()
-        context[categories] = Category.objects.all()
-        context['related_products'] = Product.objects.filter(
-            category=product.category
-        ).exclude(id=product.id)[:4]
-        context['current_category'] = product.category.slug
-        return context
+        def get_context_data(self, **kwargs):
+            context = super().get_context_data(**kwargs)
+            product = self.get_object()
+            context['categories'] = Category.objects.all()
+            context['related_products'] = Product.objects.filter(
+                category=product.category
+            ).exclude(id=product.id)[:4]
+            context['current_category'] = product.category.slug
+            return context
     
-    def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        context = self.get_context_data(**kwargs)
-        if request.headers.get('HX-Request'):
-            return TemplateResponse(request, 'main/product_detail.html', context)
-        raise TemplateResponse(request, self.template_name, context)
+        def get(self, request, *args, **kwargs):
+                self.object = self.get_object()
+                context = self.get_context_data(**kwargs)
+                if request.headers.get('HX-Request'):
+                    return TemplateResponse(request, 'main/product_detail.html', context)
+                return TemplateResponse(request, self.template_name, context)
+
+class PizzaListView(ListView):
+     model = Product
+     template_name = 'main/pizzas.html'
+     context_object_name = 'pizzas'
+     def get_queryset(self):
+        return Product.objects.filter(category__slug='pizzas')
