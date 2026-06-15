@@ -1,0 +1,92 @@
+<div class="popular-section">
+    <div class="section-heading">
+        <h2 class="section-title">Рекомендовані {{ recommended_category_name }}</h2>
+
+        {% if recommended_category_slug %}
+            <a href="{% url 'main:catalog' recommended_category_slug %}"
+               hx-get="{% url 'main:catalog' recommended_category_slug %}"
+               hx-target="#main-content"
+               hx-select="#main-content"
+               hx-swap="innerHTML show:window:top"
+               hx-push-url="true"
+               class="view-all-link">
+                Показати всі
+                <span>→</span>
+            </a>
+        {% endif %}
+    </div>
+
+    <div id="popular-products-grid" class="products-grid">
+        {% if recommended_products %}
+            {% for product in recommended_products %}
+                <article class="product-card
+                        {% if product.category.slug == 'pizza' or product.category.slug == 'pizzas' or product.category.slug == 'combo' or product.category.slug == 'kombo' %}
+                            product-card--large
+                        {% else %}
+                            product-card--compact
+                        {% endif %}"
+                         hx-get="{% url 'main:product_detail' product.slug %}"
+                         hx-target="#main-content"
+                         hx-select="#main-content"
+                         hx-swap="innerHTML show:window:top"
+                         hx-push-url="true">
+
+                    <div class="product-image">
+                        {% if product.main_image %}
+                            <img src="{{ product.main_image.url }}" alt="{{ product.name }}">
+                        {% else %}
+                            <div class="product-placeholder">🍕</div>
+                        {% endif %}
+
+                        <button type="button"
+                                class="heart-btn"
+                                onclick="event.stopPropagation();"
+                                aria-label="Favorite">
+                            ♡
+                        </button>
+                    </div>
+
+                    <div class="product-content">
+                        <h3>{{ product.name }}</h3>
+
+                        {% if product.description %}
+                            <p class="product-description">
+                                {{ product.description|truncatewords:16 }}
+                            </p>
+                        {% endif %}
+
+                        <div class="product-rating">
+                            <span>★★★★★</span>
+                            <small>4.9</small>
+                        </div>
+
+                        <div class="product-footer">
+                            <strong>
+                                {% if product.category.slug == 'pizza' or product.category.slug == 'pizzas' %}
+                                    від {{ product.min_price }} ₴
+                                {% else %}
+                                    {{ product.min_price }} ₴
+                                {% endif %}
+                            </strong>
+
+                            {% if product.category.slug == 'pizza' or product.category.slug == 'pizzas' %}
+                                <button type="button">
+                                    Обрати
+                                </button>
+                            {% else %}
+                                <button type="button"
+                                        onclick="event.stopPropagation(); alert('Кошик ще не підключений')">
+                                    В кошик
+                                </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </article>
+            {% endfor %}
+        {% else %}
+            <div class="empty-products">
+                <p>У цій категорії ще немає товарів.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>

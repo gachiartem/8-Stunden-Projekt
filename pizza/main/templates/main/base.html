@@ -4,171 +4,261 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}PIZZA VIBE{% endblock %}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>{% block title %}La.pizza — Seafood Pizza{% endblock %}</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    {% block extra_css %}{% endblock %}
+
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
-    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700;900&display=swap');
-        
-        body {
-            font-family: 'Outfit', sans-serif;
-            background-color: #faf9f6;
-        }
-        
-        .product-image {
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        
-        .product-card:hover .product-image {
-            transform: scale(1.08);
-        }
-        
-        .nav-link {
-            position: relative;
-            transition: all 0.3s ease;
-        }
-        
-        .nav-link:hover::after, .nav-link.active::after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 0;
-            width: 100%;
-            height: 3px;
-            background-color: #f97316; /* Оранжевий акцент */
-            border-radius: 2px;
-        }
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <div id="overlay" class="overlay md-hidden" aria-hidden="true"></div>
 
-        .mobile-menu {
-            transform: translateX(-100%);
-            transition: transform 0.3s ease-in-out;
-        }
-        
-        .mobile-menu.open {
-            transform: translateX(0);
-        }
-        
-        .hamburger span {
-            display: block;
-            width: 25px;
-            height: 3px;
-            background-color: #1f2937;
-            margin: 5px 0;
-            transition: 0.3s;
-            border-radius: 2px;
-        }
-        
-        /* Стилі для меню залишено без змін для збереження функціоналу */
-        .hamburger.active span:nth-child(1) { transform: rotate(-45deg) translate(-5px, 6px); }
-        .hamburger.active span:nth-child(2) { opacity: 0; }
-        .hamburger.active span:nth-child(3) { transform: rotate(45deg) translate(-5px, -6px); }
+    <aside id="mobileMenu" class="mobile-menu md-hidden" aria-label="Мобільне меню">
+        <div class="mobile-menu-inner">
+            <div class="mobile-menu-header">
+                <a href="{% url 'main:index' %}" class="brand-logo mobile-logo">
+                    La.<span>pizza</span>
+                </a>
 
-        .overlay { opacity: 0; visibility: hidden; transition: all 0.3s ease-in-out; }
-        .overlay.active { opacity: 1; visibility: visible; }
-
-        .htmx-indicator { opacity: 0; transition: opacity 200ms ease-in; }
-        .htmx-request .htmx-indicator { opacity: 1; }
-    </style>
-</head> 
-<body class="text-gray-900">
-    <div id="overlay" class="overlay fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"></div>
-    
-    <div id="mobileMenu" class="mobile-menu fixed top-0 left-0 w-80 h-full bg-white z-50 md:hidden shadow-2xl">
-        <div class="p-6">
-            <div class="flex justify-between items-center mb-10">
-                <h2 class="text-2xl font-black italic tracking-tighter text-orange-500">PIZZA<br>VIBE</h2>   
-                <button id="closeMenu" class="hamburger active">
-                    <span></span><span></span><span></span>
+                <button type="button" id="closeMenu" class="hamburger active" aria-label="Закрити меню">
+                    <span></span>
+                    <span></span>
+                    <span></span>
                 </button>
             </div>
-            
-            <nav class="space-y-4">
-                <a href="{% url 'main:index' %}" hx-get="{% url 'main:index' %}" hx-target="#main-content" hx-push-url="true"
-                   class="mobile-nav-link block text-lg font-bold py-3 border-b border-gray-100">ГОЛОВНА</a>
-                {% for category in categories %}
-                <a href="{% url 'main:catalog' category.slug %}" hx-get="{% url 'main:catalog' category.slug %}" hx-target="#main-content" hx-push-url="true"
-                   class="mobile-nav-link block text-lg font-bold py-3 border-b border-gray-100 {% if current_category == category.slug %}text-orange-500{% endif %}">
-                   {{ category.name|upper }}
+
+            <form class="mobile-search-form"
+                  hx-get="{% url 'main:catalog_all' %}"
+                  hx-target="#main-content"
+                  hx-select="#main-content"
+                  hx-swap="innerHTML"
+                  hx-push-url="true">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15z"/>
+                </svg>
+                <input type="search" name="q" placeholder="Пошук піци, напоїв...">
+            </form>
+
+            <nav class="mobile-nav">
+                <a href="{% url 'main:index' %}"
+                   hx-get="{% url 'main:index' %}"
+                   hx-target="#main-content"
+                   hx-push-url="true"
+                   hx-swap="innerHTML"
+                   class="mobile-nav-link {% if not current_category %}text-orange{% endif %}">
+                    Головна
                 </a>
+
+                {% for category in categories %}
+                    <a href="{% url 'main:catalog' category.slug %}"
+                       hx-get="{% url 'main:catalog' category.slug %}"
+                       hx-target="#main-content"
+                       hx-swap="innerHTML"
+                       hx-push-url="true"
+                       class="mobile-nav-link {% if current_category == category.slug %}text-orange{% endif %}">
+                        {{ category.name|title }}
+                    </a>
                 {% endfor %}
+
+                <a href="javascript:void(0)" class="mobile-nav-link">Про нас</a>
+                <a href="javascript:void(0)" class="mobile-nav-link">Контакти</a>
             </nav>
         </div>
-    </div>
+    </aside>
 
-    <header class="sticky top-0 bg-white/80 backdrop-blur-md z-30 border-b border-gray-100">
-        <div class="mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-20">
-                <button id="menuToggle" class="hamburger md:hidden">
-                    <span></span><span></span><span></span>
+    <div class="container-base-page">
+        <header class="site-header">
+            <div class="page-container header-container">
+                <a href="{% url 'main:index' %}"
+                   hx-get="{% url 'main:index' %}"
+                   hx-target="#main-content"
+                   hx-swap="innerHTML"
+                   hx-push-url="true"
+                   class="brand-logo">
+                    La.<span>pizza</span>
+                </a>
+
+                <form class="search-bar"
+                      hx-get="{% url 'main:catalog_all' %}"
+                      hx-target="#main-content"
+                      hx-select="#main-content"
+                      hx-swap="innerHTML"
+                      hx-push-url="true">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15z"/>
+                    </svg>
+                    <input type="search" name="q" placeholder="Search for pizza, drinks, etc...">
+                    <button type="submit" aria-label="Пошук">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M21 21l-4.35-4.35"/>
+                        <circle cx="10.5" cy="10.5" r="7.5"/>
+                    </svg>
                 </button>
-                
-                <div class="flex-shrink-0">
-                    <a href="{% url 'main:index' %}" hx-swap="innerHTML" hx-get="{% url 'main:index' %}" hx-target="#main-content" hx-push-url="true">
-                        <h1 class="text-2xl font-black italic tracking-tighter text-orange-500">PIZZA VIBE</h1>
+                </form>
+
+                <nav class="desktop-nav" aria-label="Основна навігація">
+                    <a href="{% url 'main:index' %}"
+                       hx-get="{% url 'main:index' %}"
+                       hx-target="#main-content"
+                       hx-swap="innerHTML"
+                       hx-push-url="true"
+                       class="nav-link {% if not current_category %}active-link{% endif %}">
+                        Головна
                     </a>
-                </div>
-                
-                <nav class="hidden md:flex space-x-8">
+
                     {% for category in categories %}
-                    <a href="{% url 'main:catalog' category.slug %}" hx-get="{% url 'main:catalog' category.slug %}" hx-target="#main-content" hx-push-url="true"
-                       class="nav-link text-sm font-bold uppercase tracking-wide {% if current_category == category.slug %}active text-orange-500{% endif %}">
-                       {{ category.name|upper }}
-                    </a>
+                        <a href="{% url 'main:catalog' category.slug %}"
+                           hx-get="{% url 'main:catalog' category.slug %}"
+                           hx-target="#main-content"
+                           hx-select="#main-content"
+                           hx-swap="innerHTML"
+                           hx-push-url="true"
+                           class="nav-link {% if current_category == category.slug %}active-link{% endif %}">
+                            {{ category.name|title }}
+                        </a>
                     {% endfor %}
                 </nav>
-                
-                <div class="hidden md:flex items-center space-x-6">
-                    <button id="mobile-search-toggle" hx-get="{% url 'main:catalog_all' %}?show_search=true" hx-target="#mobile-search-wrapper" class="text-sm font-bold hover:text-orange-500 transition">ПОШУК</button>
-                    <a href="#" id="desktopCart" class="text-sm font-bold bg-black text-white px-5 py-2 rounded-full hover:bg-orange-500 transition">КОШИК (0)</a>
-                </div>
-            </div>
-        </div>
-    </header>
 
-    <div id="cart-container"></div>
-    <div class="htmx-indicator fixed top-0 left-0 w-full h-1 bg-orange-500 z-50"></div>
-
-    <div id="main-content">
-        {% block content %}
-        <main class="mx-auto px-4 sm:px-6 lg:px-8 py-16">
-            <div class="text-center">
-                <h2 class="text-5xl md:text-6xl font-black mb-6">Гаряча піца <br><span class="text-orange-500">чекає на вас</span></h2>
-                <p class="text-xl text-gray-500 mb-12">Оберіть категорію та замовляйте найкращу піцу в місті</p>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-                    {% for category in categories %}
-                    <a href="{% url 'main:catalog' category.slug %}" hx-get="{% url 'main:catalog' category.slug %}" hx-target="#main-content" hx-push-url="true"
-                       class="group block p-10 bg-white border border-gray-100 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300">
-                        <h3 class="text-2xl font-bold group-hover:text-orange-500 transition">{{ category.name|upper }}</h3>
+                <div class="header-actions">
+                    <a href="javascript:void(0)" class="profile-link" aria-label="Профіль">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M20 21a8 8 0 1 0-16 0M12 13a5 5 0 1 0 0-10 5 5 0 0 0 0 10z"/>
+                        </svg>
                     </a>
-                    {% endfor %}   
+
+                    <a href="javascript:void(0)" id="desktopCart" class="cart-btn" aria-label="Кошик">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M6 6h15l-1.6 8.1a2 2 0 0 1-2 1.6H8.2a2 2 0 0 1-2-1.7L4.8 3H2"/>
+                            <path d="M9 21a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM18 21a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/>
+                        </svg>
+                        <span>Кошик</span>
+                    </a>
+                </div>
+
+                <button type="button" id="menuToggle" class="hamburger md-hidden" aria-label="Відкрити меню">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </header>
+
+        <div class="htmx-indicator"></div>
+
+        <div id="main-content">
+            {% block content %}
+                {% include 'main/home_content.html' %}
+            {% endblock %}
+        </div>
+
+        <footer class="site-footer">
+            <div class="page-container footer-grid">
+                <a href="{% url 'main:index' %}" class="brand-logo footer-logo">La.<span>pizza</span></a>
+                <p>© 2026 La.pizza. All rights reserved.</p>
+                <nav class="footer-links">
+                    <a href="javascript:void(0)">Privacy Policy</a>
+                    <a href="javascript:void(0)">Terms of Service</a>
+                    <a href="javascript:void(0)">Refund Policy</a>
+                </nav>
+                <div class="social-links">
+                    <a href="javascript:void(0)" aria-label="Instagram">◎</a>
+                    <a href="javascript:void(0)" aria-label="Facebook">f</a>
+                    <a href="javascript:void(0)" aria-label="Twitter">𝕏</a>
+                    <a href="javascript:void(0)" aria-label="LinkedIn">in</a>
                 </div>
             </div>
-        </main>
-        {% endblock %}
+        </footer>
     </div>
+    <div id="filter-modal" class="hidden filter-modal-wrapper">
+        <div class="filter-modal-backdrop"
+            onclick="document.getElementById('filter-modal').classList.add('hidden')"></div>
 
+        <div class="filter-modal-panel">
+            <div id="filter-modal-content"></div>
+        </div>
+    </div>
     <script>
-        // (Ваш JS код залишається таким самим)
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const menuToggle = document.getElementById('menuToggle');
             const closeMenu = document.getElementById('closeMenu');
             const mobileMenu = document.getElementById('mobileMenu');
             const overlay = document.getElementById('overlay');
-            function openMobileMenu() { mobileMenu.classList.add('open'); overlay.classList.add('active'); menuToggle.classList.add('active'); document.body.style.overflow = 'hidden'; }
-            function closeMobileMenu() { mobileMenu.classList.remove('open'); overlay.classList.remove('active'); menuToggle.classList.remove('active'); document.body.style.overflow = ''; }
-            menuToggle.addEventListener('click', openMobileMenu); closeMenu.addEventListener('click', closeMenu); overlay.addEventListener('click', closeMobileMenu);
-            document.addEventListener('htmx:afterRequest', closeMobileMenu);
-            window.addEventListener('resize', () => { if (window.innerWidth >= 768) closeMobileMenu(); });
-            document.addEventListener('htmx:afterSettle', updateActiveNavLinks);
+
+            function openMobileMenu() {
+                if (!mobileMenu || !overlay) return;
+                mobileMenu.classList.add('open');
+                overlay.classList.add('active');
+                if (menuToggle) menuToggle.classList.add('active');
+                document.body.classList.add('menu-open');
+            }
+
+            function closeMobileMenu() {
+                if (mobileMenu) mobileMenu.classList.remove('open');
+                if (overlay) overlay.classList.remove('active');
+                if (menuToggle) menuToggle.classList.remove('active');
+                document.body.classList.remove('menu-open');
+            }
+
+            if (menuToggle) menuToggle.addEventListener('click', openMobileMenu);
+            if (closeMenu) closeMenu.addEventListener('click', closeMobileMenu);
+            if (overlay) overlay.addEventListener('click', closeMobileMenu);
+
+            document.querySelectorAll('.mobile-nav-link').forEach(function (link) {
+                link.addEventListener('click', closeMobileMenu);
+            });
+
+            window.addEventListener('resize', function () {
+                if (window.innerWidth >= 768) closeMobileMenu();
+            });
+
+            document.addEventListener('htmx:afterSettle', function (event) {
+                updateActiveNavLinks();
+
+                if (typeof updateActiveCategoryButtons === 'function') {
+                    updateActiveCategoryButtons();
+                }
+
+                closeMobileMenu();
+
+                if (event.detail.target && event.detail.target.id === 'main-content') {
+                    window.scrollTo(0, 0);
+                    document.documentElement.scrollTop = 0;
+                    document.body.scrollTop = 0;
+                }
+            });
+
+            function cleanUrl(url) {
+                if (!url) return '';
+                return url.split('?')[0];
+            }
+
+            
             function updateActiveNavLinks() {
                 const currentPath = window.location.pathname;
-                document.querySelectorAll('.nav-link, .mobile-nav-link').forEach(link => {
-                    link.classList.remove('active', 'text-orange-500');
-                    if (link.getAttribute('href') === currentPath) link.classList.add('active', 'text-orange-500');
+
+                document.querySelectorAll('.nav-link').forEach(function (link) {
+                    link.classList.toggle('active-link', cleanUrl(link.getAttribute('href')) === currentPath);
+                });
+
+                document.querySelectorAll('.mobile-nav-link').forEach(function (link) {
+                    link.classList.toggle('text-orange', cleanUrl(link.getAttribute('href')) === currentPath);
                 });
             }
+
+            document.addEventListener('click', function (e) {
+                const categoryBtn = e.target.closest('.category-btn');
+                if (!categoryBtn) return;
+
+                document.querySelectorAll('.category-btn').forEach(function (btn) {
+                    btn.classList.remove('category-btn--active');
+                });
+
+                categoryBtn.classList.add('category-btn--active');
+            });
         });
     </script>
+    {% block extra_js %}{% endblock %}
 </body>
 </html>

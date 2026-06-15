@@ -1,0 +1,127 @@
+<div class="pizza-filter-box">
+    <div class="pizza-filter-header">
+        <div>
+            <span class="pizza-filter-kicker">Фільтрація меню</span>
+            <h2>Знайти товар</h2>
+            <p class="pizza-filter-subtitle">
+                Оберіть параметри, щоб швидше знайти потрібну піцу, напій або снек.
+            </p>
+        </div>
+
+        <button type="button"
+                class="pizza-filter-close"
+                onclick="document.getElementById('filter-modal').classList.add('hidden')">
+            ×
+        </button>
+    </div>
+
+    <form class="pizza-filter-form"
+          hx-get="{% if current_category %}{% url 'main:catalog' current_category %}{% else %}{% url 'main:catalog_all' %}{% endif %}"
+          hx-target="#main-content"
+          hx-select="#main-content"
+          hx-swap="innerHTML"
+          hx-push-url="true"
+          hx-on::after-request="document.getElementById('filter-modal').classList.add('hidden')">
+
+        <div class="pizza-filter-section">
+            <div class="pizza-filter-section-title">
+                <span>01</span>
+                <h3>Пошук</h3>
+            </div>
+
+            <div class="pizza-filter-input-wrap">
+                <span>🔎</span>
+                <input type="search"
+                       name="q"
+                       value="{{ filter_params.q }}"
+                       placeholder="Наприклад: Франческо, кола, кабаноси">
+            </div>
+        </div>
+
+        <div class="pizza-filter-section">
+            <div class="pizza-filter-section-title">
+                <span>02</span>
+                <h3>Ціна</h3>
+            </div>
+
+            <div class="pizza-filter-price-grid">
+                <div class="pizza-filter-input-wrap">
+                    <span>₴</span>
+                    <input type="number"
+                           name="min_price"
+                           value="{{ filter_params.min_price }}"
+                           placeholder="Від">
+                </div>
+
+                <div class="pizza-filter-input-wrap">
+                    <span>₴</span>
+                    <input type="number"
+                           name="max_price"
+                           value="{{ filter_params.max_price }}"
+                           placeholder="До">
+                </div>
+            </div>
+        </div>
+
+        {% if sizes %}
+            <div class="pizza-filter-section">
+                <div class="pizza-filter-section-title">
+                    <span>03</span>
+                    <h3>Розмір / варіант</h3>
+                </div>
+
+                <div class="pizza-size-options">
+                    <label class="pizza-size-option">
+                        <input type="radio"
+                               name="size"
+                               value=""
+                               {% if not filter_params.size %}checked{% endif %}>
+                        <span>Будь-який</span>
+                    </label>
+
+                    {% for size in sizes %}
+                        <label class="pizza-size-option">
+                            <input type="radio"
+                                   name="size"
+                                   value="{{ size.name }}"
+                                   {% if filter_params.size == size.name %}checked{% endif %}>
+                            <span>{{ size.name }}</span>
+                        </label>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="pizza-filter-section">
+            <div class="pizza-filter-section-title">
+                <span>04</span>
+                <h3>Склад / опис</h3>
+            </div>
+
+            <div class="pizza-filter-input-wrap">
+                <span>🥬</span>
+                <input type="text"
+                       name="description"
+                       value="{{ filter_params.description }}"
+                       placeholder="Наприклад: сир, бекон, курка, томати">
+            </div>
+        </div>
+
+        <div class="pizza-filter-actions">
+            <a class="pizza-filter-btn pizza-filter-btn-secondary"
+               href="{% if current_category %}{% url 'main:catalog' current_category %}{% else %}{% url 'main:catalog_all' %}{% endif %}"
+               hx-get="{% if current_category %}{% url 'main:catalog' current_category %}{% else %}{% url 'main:catalog_all' %}{% endif %}"
+               hx-target="#main-content"
+               hx-select="#main-content"
+               hx-swap="innerHTML"
+               hx-push-url="true"
+               hx-on::after-request="document.getElementById('filter-modal').classList.add('hidden')">
+                Скинути
+            </a>
+
+            <button type="submit" class="pizza-filter-btn pizza-filter-btn-primary">
+                Застосувати
+            </button>
+        </div>
+    </form>
+</div>

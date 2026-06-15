@@ -1,220 +1,288 @@
+{% extends 'main/base.html' %}
 {% block content %}
-<main class="mx-auto px-4 sm:px-6 lg:px-8 py-12">
-    <div class="mb-10 text-sm font-bold tracking-widest uppercase">
-        <nav class="flex items-center space-x-2 text-gray-400">
-            <a href="{% url 'main:index' %}" hx-get="{% url 'main:index' %}" hx-target="#main-content" hx-push-url="true" class="hover:text-orange-500">ГОЛОВНА</a>
-            <span>/</span>
-            <a href="{% url 'main:catalog' product.category.slug %}" hx-get="{% url 'main:catalog' product.category.slug %}" hx-target="#main-content" hx-push-url="true" class="hover:text-orange-500">{{ product.category.name|upper }}</a>
-            <span class="text-gray-900">/</span>
-            <span class="text-gray-900">{{ product.name|upper }}</span>
-        </nav>
-    </div>
+<main class="detail-page page-container detail-page--{{ product.category.slug }}">
+    <nav class="breadcrumbs">
+        <a href="{% url 'main:index' %}"
+           hx-get="{% url 'main:index' %}"
+           hx-target="#main-content"
+           hx-select="#main-content"
+           hx-swap="innerHTML"
+           hx-push-url="true">
+            Головна
+        </a>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
-        <div class="space-y-4">
-            <div class="aspect-square overflow-hidden bg-gray-100 rounded-3xl shadow-sm">
+        <span>/</span>
+
+        <a href="{% url 'main:catalog' product.category.slug %}"
+           hx-get="{% url 'main:catalog' product.category.slug %}"
+           hx-target="#main-content"
+           hx-select="#main-content"
+           hx-swap="innerHTML"
+           hx-push-url="true">
+            {{ product.category.name }}
+        </a>
+
+        <span>/</span>
+        <span>{{ product.name }}</span>
+    </nav>
+
+    <section class="detail-layout">
+        <div class="detail-gallery">
+            <div class="detail-main-image">
                 {% if product.main_image %}
-                    <img src="{{ product.main_image.url }}" alt="{{ product.name }}" class="w-full h-full object-cover">
+                    <img id="product-main-image"
+                         src="{{ product.main_image.url }}"
+                         alt="{{ product.name }}">
                 {% else %}
-                    <div class="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400">🍕</div>
+                    <div class="detail-placeholder">🍕</div>
                 {% endif %}
             </div>
 
             {% if product.images.all %}
-            <div class="grid grid-cols-4 gap-4">
-                {% for image in product.images.all %}
-                <div class="aspect-square overflow-hidden bg-gray-100 cursor-pointer rounded-2xl border-2 border-transparent hover:border-orange-500 transition-all">
-                    <img src="{{ image.image.url }}" alt="{{ product.name }}" class="w-full h-full object-cover" onclick="changeMainImage(this.src)">
-                </div>
-                {% endfor %}
-            </div>
-            {% endif %}
-        </div>
+                <div class="detail-thumbs">
+                    {% if product.main_image %}
+                        <button type="button"
+                                class="detail-thumb"
+                                onclick="changeDetailImage('{{ product.main_image.url }}')">
+                            <img src="{{ product.main_image.url }}" alt="{{ product.name }}">
+                        </button>
+                    {% endif %}
 
-        <div class="space-y-8">
-            <div>
-                <h1 class="text-4xl md:text-5xl font-black italic tracking-tighter mb-4">{{ product.name|upper }}</h1>
-                <p class="text-lg text-gray-500 mb-6 italic">{{ product.color|upper }}</p>
-                <div class="text-3xl font-black text-orange-600">{{ product.price }} ₴</div>
-            </div>
-
-            {% if product.product_sizes.all %}
-            <div>
-                <h3 class="text-sm font-bold uppercase mb-4">Оберіть розмір: </h3>
-                <div class="grid grid-cols-3 gap-3">
-                    {% for product_size in product.product_sizes.all %}
-                    <div class="size-option">
-                        <input type="radio" name="size" class="size-radio hidden" id="size-{{ product_size.id }}" value="{{ product_size.id }}" data-size="{{ product_size.size.name }}" {% if product_size.stock == 0 %}disabled{% endif %} {% if forloop.first and product_size.stock > 0 %}checked{% endif %}>
-                        <label for="size-{{ product_size.id }}" class="block border-2 border-gray-200 py-3 rounded-xl text-sm font-bold text-center cursor-pointer hover:border-orange-500 transition-all {% if product_size.stock == 0 %}opacity-40 cursor-not-allowed{% endif %}">
-                            {{ product_size.size.name }}
-                        </label>
-                    </div>
+                    {% for image in product.images.all %}
+                        <button type="button"
+                                class="detail-thumb"
+                                onclick="changeDetailImage('{{ image.image.url }}')">
+                            <img src="{{ image.image.url }}" alt="{{ product.name }}">
+                        </button>
                     {% endfor %}
                 </div>
-            </div>
             {% endif %}
+        </div>
 
-            <div class="space-y-4">
-                <button id="add-to-cart-btn" class="w-full bg-orange-500 text-white py-4 rounded-full text-sm font-black uppercase hover:bg-orange-600 transition-all shadow-xl shadow-orange-500/30" onclick="addToCart()" {% if not product.product_sizes.all %}disabled{% endif %}>
-                    ДОДАТИ В КОШИК
-                </button>
+        <div class="detail-info">
+            <div class="detail-category">{{ product.category.name }}</div>
+
+            <h1 class="detail-title">{{ product.name }}</h1>
+
+            <p class="detail-desc">
+                {% if product.description %}
+                    {{ product.description|truncatewords:28 }}
+                {% else %}
+                    Свіжий товар з добірними інгредієнтами.
+                {% endif %}
+            </p>
+
+            <div class="detail-price">
+                <span id="product-price">{{ product.min_price }}</span> ₴
             </div>
 
-            <div class="border-t border-gray-100 pt-8">
-                <h3 class="text-sm font-bold uppercase mb-4">Склад піци:</h3>
-                <div class="prose prose-sm text-gray-600">
-                    <p>{{ product.description|linebreaks }}</p>
-                </div>
+            
+            <form class="detail-cart-form">
+                {% with product_sizes=product.product_sizes.all %}
+                    {% if product_sizes %}
+                        {% if product_sizes|length > 1 %}
+                        <div class="detail-block">
+                            <h3>
+                                {% if product.category.slug == 'pizza' or product.category.slug == 'pizzas' %}
+                                    Оберіть розмір
+                                {% elif product.category.slug == 'drinks' %}
+                                    Оберіть обʼєм
+                                {% else %}
+                                    Оберіть варіант
+                                {% endif %}
+                            </h3>
+
+                            <div class="size-grid">
+                                {% for product_size in product_sizes %}
+                                    <label class="size-option {% if product_size.stock <= 0 %}size-option--disabled{% endif %}">
+                                        <input class="size-radio"
+                                            type="radio"
+                                            name="size_id"
+                                            value="{{ product_size.id }}"
+                                            data-price="{{ product_size.price }}"
+                                            {% if forloop.first and product_size.stock > 0 %}checked{% endif %}
+                                            {% if product_size.stock <= 0 %}disabled{% endif %}>
+
+                                        <span class="size-card">
+                                            <strong>{{ product_size.size.name }}</strong>
+
+                                            {% if product_size.stock <= 0 %}
+                                                <small>Немає</small>
+                                            {% else %}
+                                                <small>{{ product_size.price }} ₴</small>
+                                            {% endif %}
+                                        </span>
+                                    </label>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                    {% elif product_sizes|length == 1 %}
+                        {% for product_size in product_sizes %}
+                            <input type="hidden"
+                                name="size_id"
+                                value="{{ product_size.id }}"
+                                data-price="{{ product_size.price }}">
+
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function () {
+                                    const priceElement = document.getElementById('product-price');
+
+                                    if (priceElement) {
+                                        priceElement.textContent = '{{ product_size.price }}';
+                                    }
+                                });
+
+                                document.addEventListener('htmx:afterSettle', function () {
+                                    const priceElement = document.getElementById('product-price');
+
+                                    if (priceElement) {
+                                        priceElement.textContent = '{{ product_size.price }}';
+                                    }
+                                });
+                            </script>
+                        {% endfor %}
+                    {% endif %}
+
+                        <button id="add-to-cart-btn"
+                                type="button"
+                                class="detail-add-btn"
+                                onclick="alert('Кошик ще не підключений')">
+                            Додати в кошик
+                        </button>
+                    {% else %}
+                        <button type="button"
+                                class="detail-add-btn"
+                                disabled>
+                            Немає в наявності
+                        </button>
+                    {% endif %}
+                {% endwith %}
+            </form>
+
+            <div class="detail-block">
+                <h3 class="ingredients-text">
+                    {% if product.category.slug == 'pizza' or product.category.slug == 'pizzas' %}
+                        Склад піци
+                    {% elif product.category.slug == 'drinks' %}
+                        Інформація про напій
+                    {% elif product.category.slug == 'desserts' or product.category.slug == 'deserti' %}
+                        Склад десерту
+                    {% else %}
+                        Склад
+                    {% endif %}
+                </h3>
+
+                <p class="detail-ingredients">
+                    {% if product.ingredients %}
+                        {{ product.ingredients }}
+                    {% else %}
+                        Інформацію буде додано найближчим часом.
+                    {% endif %}
+                </p>
             </div>
         </div>
-    </div>
+    </section>
 
     {% if related_products %}
-    <div class="mt-24 pt-16 border-t border-gray-100">
-        <h2 class="text-2xl font-black italic tracking-tighter mb-10">СХОЖА ПІЦА</h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {% for related_product in related_products %}
-            <div class="product-card group cursor-pointer bg-white p-3 rounded-3xl border border-gray-100 hover:border-orange-200 transition-all" hx-get="{% url 'main:product_detail' related_product.slug %}" hx-target="#main-content" hx-push-url="true">
-                <div class="aspect-square overflow-hidden bg-gray-50 rounded-2xl mb-4">
-                    <img src="{{ related_product.main_image.url }}" alt="{{ related_product.name }}" class="w-full h-full object-cover">
-                </div>
-                <div class="text-center pb-2">
-                    <h3 class="text-md font-bold">{{ related_product.name|upper }}</h3>
-                    <p class="text-orange-600 font-black mt-1">{{ related_product.price }} ₴</p>
-                </div>
+        <section class="related-section">
+            <h2>Схожі товари</h2>
+
+            <div class="products-grid">
+                {% for related_product in related_products %}
+                    <article class="product-card"
+                            hx-get="{% url 'main:product_detail' related_product.slug %}"
+                            hx-target="#main-content"
+                            hx-select="#main-content"
+                            hx-swap="innerHTML"
+                            hx-push-url="true">
+
+                        <div class="product-image">
+                            {% if related_product.main_image %}
+                                <img src="{{ related_product.main_image.url }}" alt="{{ related_product.name }}">
+                            {% else %}
+                                <div class="product-placeholder">🍕</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="product-content">
+                            <h3>{{ related_product.name }}</h3>
+
+                            <div class="product-footer">
+                                <strong>
+                                    {% if related_product.category.slug == 'pizza' or related_product.category.slug == 'pizzas' %}
+                                        від {{ related_product.min_price }} ₴
+                                    {% else %}
+                                        {{ related_product.min_price }} ₴
+                                    {% endif %}
+                                </strong>
+
+                                {% if related_product.category.slug == 'pizza' or related_product.category.slug == 'pizzas' %}
+                                    <button type="button">
+                                        Обрати
+                                    </button>
+                                {% else %}
+                                    <button type="button"
+                                            onclick="event.stopPropagation(); alert('Кошик ще не підключений')">
+                                        В кошик
+                                    </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </article>
+                {% endfor %}
             </div>
-            {% endfor %}
-        </div>
-    </div>
+        </section>
     {% endif %}
 </main>
 
-<style>
-    .size-radio:checked + label {
-        background-color: #f97316 !important;
-        color: white !important;
-        border-color: #f97316 !important;
-    }
-</style>
-
 <script>
-    let selectedSize = null;
-    let selectedSizeId = null;
+    function changeDetailImage(src) {
+        const mainImg = document.getElementById('product-main-image');
 
-    function changeMainImage(src) {
-        const mainImg = document.querySelector('.aspect-square img');
         if (mainImg) {
             mainImg.src = src;
         }
     }
 
-    function updateSelectedSize() {
-        const sizeRadios = document.querySelectorAll('.size-radio');
-        const checkedRadio = Array.from(sizeRadios).find(radio => radio.checked && !radio.disabled);
-        if (checkedRadio) {
-            selectedSize = checkedRadio.dataset.size;
-            selectedSizeId = checkedRadio.value;
-            console.log('Updated Selected Size:', selectedSize, 'ID:', selectedSizeId);
-        } else {
-            selectedSize = null;
-            selectedSizeId = null;
-            console.log('No valid size selected');
-        }
-    }
-    
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
-    
-    function showNotification(message) {
-        const notification = document.createElement('div');
-        notification.className = 'fixed top-20 right-4 bg-black text-white px-6 py-3 rounded shadow-lg z-50 transform translate-x-full transition-transform duration-300';
-        notification.textContent = message;
-        document.body.appendChild(notification);
-        setTimeout(() => {
-            notification.style.transform = 'translateX(0)';
-        }, 10);
-        setTimeout(() => {
-            notification.style.transform = 'translateX(100%)';
-            setTimeout(() => {
-                notification.remove();
-            }, 300);
-        }, 3000);
-    }
-
-    function initializeSizeRadios() {
-        const sizeRadios = document.querySelectorAll('.size-radio');
+    function initProductDetailPage() {
+        const priceElement = document.getElementById('product-price');
         const addToCartBtn = document.getElementById('add-to-cart-btn');
-        console.log('Size Radios Found:', sizeRadios.length);
+        const sizeRadios = document.querySelectorAll('.size-radio');
 
-        if (sizeRadios.length === 0) {
-            console.log('No size radios available');
-            addToCartBtn.disabled = true;
-            addToCartBtn.classList.add('opacity-50', 'cursor-not-allowed');
-            showNotification('No sizes available');
-            return;
+        if (!addToCartBtn) return;
+
+        const availableRadios = Array.from(sizeRadios).filter(function (radio) {
+            return !radio.disabled;
+        });
+
+        if (sizeRadios.length > 0) {
+            let checkedRadio = availableRadios.find(function (radio) {
+                return radio.checked;
+            });
+
+            if (!checkedRadio && availableRadios.length > 0) {
+                checkedRadio = availableRadios[0];
+                checkedRadio.checked = true;
+            }
+
+            if (checkedRadio && priceElement) {
+                priceElement.textContent = checkedRadio.dataset.price;
+            }
+
+            addToCartBtn.disabled = availableRadios.length === 0;
         }
 
-        const availableRadios = Array.from(sizeRadios).filter(radio => !radio.disabled);
-        console.log('Available Size Radios:', availableRadios.length);
-
-        if (availableRadios.length === 0) {
-            console.log('All sizes are out of stock');
-            addToCartBtn.disabled = true;
-            addToCartBtn.classList.add('opacity-50', 'cursor-not-allowed');
-            showNotification('All sizes are out of stock');
-            return;
-        }
-
-        // Ensure at least one valid radio is checked
-        let checkedRadio = Array.from(sizeRadios).find(radio => radio.checked && !radio.disabled);
-        if (!checkedRadio && availableRadios.length > 0) {
-            availableRadios[0].checked = true;
-            checkedRadio = availableRadios[0];
-            console.log('Auto-checked first available radio:', checkedRadio.dataset.size, 'ID:', checkedRadio.value);
-        }
-
-        // Update selected size
-        updateSelectedSize();
-
-        // Add event listeners
-        sizeRadios.forEach(radio => {
-            radio.addEventListener('change', function(e) {
-                if (this.disabled) {
-                    console.log('Changed disabled radio:', this.dataset.size);
-                    return;
+        sizeRadios.forEach(function (radio) {
+            radio.addEventListener('change', function () {
+                if (priceElement && radio.dataset.price) {
+                    priceElement.textContent = radio.dataset.price;
                 }
-                console.log('Radio Changed - Selected Size:', this.dataset.size, 'ID:', this.value);
-                updateSelectedSize();
-                addToCartBtn.disabled = false;
-                addToCartBtn.classList.remove('opacity-50', 'cursor-not-allowed');
             });
         });
     }
 
-    document.addEventListener('DOMContentLoaded', initializeSizeRadios);
-    document.addEventListener('htmx:afterSwap', initializeSizeRadios);
-
-    const productCards = document.querySelectorAll('.product-card');
-    productCards.forEach(card => {
-        card.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-2px)';
-            this.style.transition = 'transform 0.3s ease';
-        });
-        card.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0)';
-        });
-    });
+    document.addEventListener('DOMContentLoaded', initProductDetailPage);
+    document.addEventListener('htmx:afterSettle', initProductDetailPage);
 </script>
 {% endblock %}

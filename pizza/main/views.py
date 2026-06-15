@@ -2,43 +2,72 @@ from django.shortcuts import get_object_or_404
 from django.views.generic import TemplateView, DetailView, ListView
 from django.http import HttpResponse
 from django.template.response import TemplateResponse
-from .models import Category,Product,Size
-from django.db.models import Q
+from django.views.decorators.http import require_POST
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
+from .models import Category, Product, Size, ProductSize, NewsletterSubscriber
+from django.db.models import Q, Count  
 
 
 class IndexView(TemplateView):
     template_name = 'main/base.html'
 
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['categories'] = Category.objects.all()
-        context['current_category'] = None
+
+        categories = Category.objects.annotate(total_products=Count('products'))
+        default_category = get_default_recommended_category()
+
+        if default_category:
+            recommended_products = Product.objects.filter(
+                category=default_category
+            ).order_by('-created_at')[:4]
+            recommended_category_slug = default_category.slug
+            recommended_category_name = default_category.name
+        else:
+            recommended_products = Product.objects.none()
+            recommended_category_slug = ''
+            recommended_category_name = 'товари'
+
+        context.update({
+            'categories': categories,
+            'current_category': None,
+            'recommended_products': recommended_products,
+            'recommended_category_slug': recommended_category_slug,
+            'recommended_category_name': recommended_category_name,
+        })
+
         return context
-    
 
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
         if request.headers.get('HX-Request'):
             return TemplateResponse(request, 'main/home_content.html', context)
         return TemplateResponse(request, self.template_name, context)
-    
+
+def get_default_recommended_category():
+    return (
+        Category.objects.filter(slug__in=['pizza', 'pizzas']).first()
+        or Category.objects.annotate(total_products=Count('products'))
+        .filter(total_products__gt=0)
+        .first()
+    )
 
 class CatalogView(TemplateView):
     template_name = 'main/base.html'
 
     FILTER_MAPPING = {
-        'min_price': lambda queryset, value:queryset.filter(price__gte=value),
-        'max_price': lambda queryset, value:queryset.filter(price__lte=value),
-        'size': lambda queryset, value:queryset.filter(product_sizes__size__name=value),
+        'min_price': lambda queryset, value: queryset.filter(product_sizes__price__gte=value),
+        'max_price': lambda queryset, value: queryset.filter(product_sizes__price__lte=value),
+        'size': lambda queryset, value: queryset.filter(product_sizes__size__name=value),
         'description': lambda queryset, value: queryset.filter(description__icontains=value),
     }
 
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
         category_slug = kwargs.get('category_slug')
-        categories = Category.objects.all()
+        categories = Category.objects.annotate(total_products=Count('products'))
         products = Product.objects.all().order_by('-created_at')
         current_category = None
 
@@ -52,6 +81,8 @@ class CatalogView(TemplateView):
                 Q(name__icontains=query) | Q(description__icontains=query)
             )
 
+        products_for_sizes = products
+
         filter_params = {}
         for param, filter_func in self.FILTER_MAPPING.items():
             value = self.request.GET.get(param)
@@ -63,14 +94,42 @@ class CatalogView(TemplateView):
 
         filter_params['q'] = query or ''
 
+        if current_category:
+            recommended_category_slug = current_category.slug
+            recommended_category_name = current_category.name
+            recommended_products = products.distinct()[:4]
+        else:
+            default_category = get_default_recommended_category()
+
+            if default_category:
+                recommended_category_slug = default_category.slug
+                recommended_category_name = default_category.name
+                recommended_products = Product.objects.filter(
+                    category=default_category
+                ).order_by('-created_at')[:4]
+            else:
+                recommended_category_slug = ''
+                recommended_category_name = 'товари'
+                recommended_products = Product.objects.none()
+
+        size_ids = ProductSize.objects.filter(
+            product__in=products_for_sizes,
+            size__isnull=False
+        ).values_list('size_id', flat=True).distinct()
+
+        available_sizes = Size.objects.filter(id__in=size_ids).order_by('name')
 
         context.update({
             'categories': categories,
-            'products': products,
+            'products': products.distinct(),
+            'recommended_products': recommended_products,
+            'recommended_category_slug': recommended_category_slug,
+            'recommended_category_name': recommended_category_name,
             'current_category': category_slug,
+            'current_category_obj': current_category,
             'filter_params': filter_params,
-            'sizes': Size.objects.all(),
-            'search_query': query or ''
+            'sizes': available_sizes,
+            'search_query': query or '',
         })
 
         if self.request.GET.get('show_search') == 'true':
@@ -79,46 +138,87 @@ class CatalogView(TemplateView):
             context['reset_search'] = True
 
         return context
-    
+
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
+
         if request.headers.get('HX-Request'):
             if context.get('show_search'):
                 return TemplateResponse(request, 'main/search_input.html', context)
+
             elif context.get('reset_search'):
                 return TemplateResponse(request, 'main/search_button.html', {})
-            template = 'main/filter_model.html' if request.GET.get('show_filters') == 'true' else 'main/catalog.html'
+
+            if request.GET.get('format') == 'html':
+                return TemplateResponse(request, 'main/recommended_products.html', context)
+
+            template = 'main/filter_modal.html' if request.GET.get('show_filters') == 'true' else 'main/catalog.html'
             return TemplateResponse(request, template, context)
+
         return TemplateResponse(request, self.template_name, context)
     
-
 class ProductDetailView(DetailView):
-        model = Product
-        template_name = 'main/base.html'
-        slug_field = 'slug'
-        slug_url_kwarg = 'slug'
+    model = Product
+    template_name = 'main/base.html'
+    slug_field = 'slug'
+    slug_url_kwarg = 'slug'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        product = self.get_object()
+        context['categories'] = Category.objects.annotate(total_products=Count('products'))
+        context['related_products'] = Product.objects.filter(
+            category=product.category
+        ).exclude(id=product.id)[:4]
+        context['current_category'] = product.category.slug
+        return context
 
-        def get_context_data(self, **kwargs):
-            context = super().get_context_data(**kwargs)
-            product = self.get_object()
-            context['categories'] = Category.objects.all()
-            context['related_products'] = Product.objects.filter(
-                category=product.category
-            ).exclude(id=product.id)[:4]
-            context['current_category'] = product.category.slug
-            return context
-    
-        def get(self, request, *args, **kwargs):
-                self.object = self.get_object()
-                context = self.get_context_data(**kwargs)
-                if request.headers.get('HX-Request'):
-                    return TemplateResponse(request, 'main/product_detail.html', context)
-                return TemplateResponse(request, self.template_name, context)
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        context = self.get_context_data(**kwargs)
+        if request.headers.get('HX-Request'):
+            return TemplateResponse(request, 'main/product_detail.html', context)
+        return TemplateResponse(request, 'main/product_detail.html', context)
+
 
 class PizzaListView(ListView):
-     model = Product
-     template_name = 'main/pizzas.html'
-     context_object_name = 'pizzas'
-     def get_queryset(self):
+    model = Product
+    template_name = 'main/pizzas.html'
+    context_object_name = 'pizzas'
+
+    def get_queryset(self):
         return Product.objects.filter(category__slug='pizzas')
+
+@require_POST
+def subscribe_newsletter(request):
+    email = request.POST.get('email', '').strip().lower()
+
+    if not email:
+        return HttpResponse(
+            '<p class="subscribe-message subscribe-error">Введіть email.</p>'
+        )
+
+    try:
+        validate_email(email)
+    except ValidationError:
+        return HttpResponse(
+            '<p class="subscribe-message subscribe-error">Некоректний email.</p>'
+        )
+
+    subscriber, created = NewsletterSubscriber.objects.get_or_create(
+        email=email,
+        defaults={'is_active': True}
+    )
+
+    if not created:
+        if subscriber.is_active:
+            return HttpResponse(
+                '<p class="subscribe-message subscribe-info">Ви вже підписані.</p>'
+            )
+
+        subscriber.is_active = True
+        subscriber.save()
+
+    return HttpResponse(
+        '<p class="subscribe-message subscribe-success">Дякуємо! Ви підписалися на оновлення.</p>'
+    )

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import Category, Size , Product , \
-    ProductImage, ProductSize
+    ProductImage, ProductSize, NewsletterSubscriber
 
 
 class ProductImageInline(admin.TabularInline):
@@ -28,7 +28,12 @@ class CategoryAdmin(admin.ModelAdmin):
 class SizeAdmin(admin.ModelAdmin):
     list_display = ['name']
 
+class NewsletterSubscriberAdmin(admin.ModelAdmin):
+    list_display = ('email', 'created_at', 'is_active')
+    search_fields = ('email',)
+    list_filter = ('is_active', 'created_at')
 
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Size, SizeAdmin)
 admin.site.register(Product, ProductAdmin)
+admin.site.register(NewsletterSubscriber)
