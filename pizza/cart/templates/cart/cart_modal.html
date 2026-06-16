@@ -1,0 +1,74 @@
+<div id="cart-overlay" class="cart-overlay open" onclick="closeCart()"></div>
+
+<aside id="cart-modal" class="cart-modal open">
+    <div class="cart-modal-inner">
+
+        <div class="cart-modal-header">
+            <div>
+                <span class="cart-modal-kicker">La.pizza</span>
+                <h2>Кошик</h2>
+            </div>
+
+            <div class="cart-modal-count">
+                <span id="cart-count">{{ cart.total_items }}</span>
+            </div>
+
+            <button type="button"
+                    class="cart-modal-close"
+                    onclick="closeCart()"
+                    aria-label="Закрити кошик">
+                ×
+            </button>
+        </div>
+
+        <div class="cart-modal-body">
+            <div id="cart-items" class="cart-items-list">
+                {% for item in cart_items %}
+                    {% include 'cart/cart_item.html' %}
+                {% empty %}
+                    <div class="cart-empty-state">
+                        <div class="cart-empty-icon">🛒</div>
+                        <h3>Кошик порожній</h3>
+                        <p>Додайте піцу, напої або снеки, щоб оформити замовлення.</p>
+
+                        <button type="button"
+                                class="cart-empty-btn"
+                                onclick="closeCart()">
+                            Перейти до меню
+                        </button>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div id="cart-summary" class="cart-modal-footer">
+            {% if cart_items %}
+                {% include 'cart/cart_summary.html' %}
+            {% else %}
+                <div class="cart-empty-summary">
+                    <span>До сплати</span>
+                    <strong>0 ₴</strong>
+                </div>
+            {% endif %}
+        </div>
+
+    </div>
+</aside>
+
+<script>
+    function openCart() {
+            document.getElementById('cart-modal')?.classList.add('open');
+            document.getElementById('cart-overlay')?.classList.add('open');
+        }
+
+        function closeCart() {
+            document.getElementById('cart-modal')?.classList.remove('open');
+            document.getElementById('cart-overlay')?.classList.remove('open');
+        }
+
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') {
+            closeCart();
+        }
+    });
+</script>

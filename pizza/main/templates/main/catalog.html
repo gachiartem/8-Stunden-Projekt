@@ -1,4 +1,5 @@
 {% extends 'main/base.html' %}
+
 {% block content %}
 <main class="catalog-page page-container">
     <div class="catalog-head">
@@ -12,12 +13,11 @@
                     Наше меню
                 {% endif %}
             </h1>
-
         </div>
 
-        <button type="button" 
-        class="catalog-filter-btn"
-                hx-get="{% if current_category %}{% url 'main:catalog' current_category %}{% else %}{% url 'main:catalog_all' %}{% endif %}?show_filters=true&color={{ filter_params.color|urlencode }}&min_price={{ filter_params.min_price|urlencode }}&max_price={{ filter_params.max_price|urlencode }}&size={{ filter_params.size|urlencode }}" 
+        <button type="button"
+                class="catalog-filter-btn"
+                hx-get="{% if current_category %}{% url 'main:catalog' current_category %}{% else %}{% url 'main:catalog_all' %}{% endif %}?show_filters=true&description={{ filter_params.description|urlencode }}&min_price={{ filter_params.min_price|urlencode }}&max_price={{ filter_params.max_price|urlencode }}&size={{ filter_params.size|urlencode }}&q={{ filter_params.q|urlencode }}"
                 hx-target="#filter-modal-content"
                 hx-swap="innerHTML"
                 hx-on::after-request="document.getElementById('filter-modal').classList.remove('hidden')">
@@ -27,66 +27,102 @@
             Фільтри
         </button>
     </div>
+
     {% if products %}
         <div class="products-grid catalog-grid">
             {% for product in products %}
                 <article class="product-card catalog-card
-                    {% if product.category.slug == 'pizza' or product.category.slug == 'pizzas' or product.category.slug == 'combo' or product.category.slug == 'kombo' %}
+                    {% if product.category.slug == 'pizza' or product.category.slug == 'pizzas' or product.category.slug == 'pici' or product.category.name == 'Піци' or product.category.slug == 'combo' or product.category.slug == 'kombo' %}
                         product-card--large
                     {% else %}
                         product-card--compact
-                    {% endif %}"
-                    hx-get="{% url 'main:product_detail' product.slug %}"
-                    hx-target="#main-content"
-                    hx-select="#main-content"
-                    hx-swap="innerHTML"
-                    hx-push-url="true">
+                    {% endif %}">
 
-                    <div class="product-image">
-                        {% if product.main_image %}
-                            <img src="{{ product.main_image.url }}" alt="{{ product.name }}">
-                        {% else %}
-                            <div class="product-placeholder">🍕</div>
-                        {% endif %}
+                    <div class="product-open-area"
+                         hx-get="{% url 'main:product_detail' product.slug %}"
+                         hx-target="#main-content"
+                         hx-select="#main-content"
+                         hx-swap="innerHTML show:window:top"
+                         hx-push-url="true">
 
-                        <button type="button"
-                                class="heart-btn"
-                                onclick="event.stopPropagation();"
-                                aria-label="Додати в улюблені">
-                            ♡
-                        </button>
-                    </div>
-
-                    <div class="product-content">
-                        <h3>{{ product.name }}</h3>
-
-                        <p class="product-description">
-                            {% if product.description %}
-                                {{ product.description|truncatewords:14 }}
-                            {% elif product.color %}
-                                {{ product.color|truncatewords:14 }}
+                        <div class="product-image">
+                            {% if product.main_image %}
+                                <img src="{{ product.main_image.url }}" alt="{{ product.name }}">
                             {% else %}
-                                Свіжа піца з добірними інгредієнтами.
+                                <div class="product-placeholder">🍕</div>
                             {% endif %}
-                        </p>
 
-                        <div class="product-rating">
-                            <span>★★★★★</span>
-                            <small>4.9</small>
-                        </div>
-
-                        <div class="product-footer">
-                            <strong>
-                                {% if product.category.slug == 'pizza' or product.category.slug == 'pizzas' %}
-                                    від {{ product.min_price }} ₴
-                                {% else %}
-                                    {{ product.min_price }} ₴
-                                {% endif %}
-                            </strong>
-                            <button type="button" onclick="event.stopPropagation();">
-                                В кошик
+                            <button type="button"
+                                    class="heart-btn"
+                                    onclick="event.stopPropagation();"
+                                    aria-label="Додати в улюблені">
+                                ♡
                             </button>
                         </div>
+
+                        <div class="product-content">
+                            <h3>{{ product.name }}</h3>
+
+                            <p class="product-description">
+                                {% if product.description %}
+                                    {{ product.description|truncatewords:14 }}
+                                {% elif product.color %}
+                                    {{ product.color|truncatewords:14 }}
+                                {% else %}
+                                    Свіжа піца з добірними інгредієнтами.
+                                {% endif %}
+                            </p>
+
+                            <div class="product-rating">
+                                <span>★★★★★</span>
+                                <small>4.9</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="product-footer">
+                        <strong>
+                            {% if product.category.slug == 'pizza' or product.category.slug == 'pizzas' or product.category.slug == 'pici' or product.category.name == 'Піци' %}
+                                від {{ product.min_price }} ₴
+                            {% else %}
+                                {{ product.min_price }} ₴
+                            {% endif %}
+                        </strong>
+
+                        {% if product.category.slug == 'pizza' or product.category.slug == 'pizzas' or product.category.slug == 'pici' or product.category.name == 'Піци' %}
+                            <button type="button"
+                                    class="product-action-btn"
+                                    hx-get="{% url 'main:product_detail' product.slug %}"
+                                    hx-target="#main-content"
+                                    hx-select="#main-content"
+                                    hx-swap="innerHTML show:window:top"
+                                    hx-push-url="true">
+                                Обрати
+                            </button>
+                        {% else %}
+                            {% with default_size=product.product_sizes.first %}
+                                {% if default_size %}
+                                    <form class="product-cart-form"
+                                          hx-post="{% url 'cart:add_to_cart' product.slug %}"
+                                          hx-target="#cart-container"
+                                          hx-swap="innerHTML">
+
+                                        {% csrf_token %}
+
+                                        <input type="hidden" name="size_id" value="{{ default_size.id }}">
+                                        <input type="hidden" name="quantity" value="1">
+
+                                        <button type="submit" class="product-action-btn">
+                                            В кошик
+                                        </button>
+                                    </form>
+                                {% else %}
+                                    <button type="button" class="product-action-btn" disabled>
+                                        Немає
+                                    </button>
+                                {% endif %}
+                            {% endwith %}
+                        {% endif %}
                     </div>
                 </article>
             {% endfor %}
@@ -94,6 +130,7 @@
     {% else %}
         <div class="empty-state">
             <p>На жаль, нічого не знайдено</p>
+
             <a href="{% url 'main:index' %}"
                hx-get="{% url 'main:index' %}"
                hx-target="#main-content"

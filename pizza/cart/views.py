@@ -158,21 +158,23 @@ class RemoveCartItemView(CartMixin, View):
             context = {
                 'cart': cart,
                 'cart_items': cart.items.select_related(
-                'product',
-                'product_size__size',
+                    'product',
+                    'product_size__size',
                 ).order_by('-added_at')
             }
+
             return TemplateResponse(request, 'cart/cart_modal.html', context)
-        
+
         except CartItem.DoesNotExist:
             return JsonResponse({
                 'error': 'Товар не знайдений'
-            }, status=400)
+            }, status=404)
         
 
 class CartCountView(CartMixin, View):
     def get(self, request):
         cart = self.get_cart(request)
+
         return JsonResponse({
             'total_items': cart.total_items,
             'subtotal': float(cart.subtotal)

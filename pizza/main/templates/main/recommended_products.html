@@ -20,66 +20,95 @@
         {% if recommended_products %}
             {% for product in recommended_products %}
                 <article class="product-card
-                        {% if product.category.slug == 'pizza' or product.category.slug == 'pizzas' or product.category.slug == 'combo' or product.category.slug == 'kombo' %}
-                            product-card--large
-                        {% else %}
-                            product-card--compact
-                        {% endif %}"
+                    {% if product.category.slug == 'pizza' or product.category.slug == 'pizzas' or product.category.slug == 'pici' or product.category.name == 'Піци' or product.category.slug == 'combo' or product.category.slug == 'kombo' %}
+                        product-card--large
+                    {% else %}
+                        product-card--compact
+                    {% endif %}">
+
+                    <div class="product-open-area"
                          hx-get="{% url 'main:product_detail' product.slug %}"
                          hx-target="#main-content"
                          hx-select="#main-content"
                          hx-swap="innerHTML show:window:top"
                          hx-push-url="true">
 
-                    <div class="product-image">
-                        {% if product.main_image %}
-                            <img src="{{ product.main_image.url }}" alt="{{ product.name }}">
-                        {% else %}
-                            <div class="product-placeholder">🍕</div>
-                        {% endif %}
+                        <div class="product-image">
+                            {% if product.main_image %}
+                                <img src="{{ product.main_image.url }}" alt="{{ product.name }}">
+                            {% else %}
+                                <div class="product-placeholder">🍕</div>
+                            {% endif %}
 
-                        <button type="button"
-                                class="heart-btn"
-                                onclick="event.stopPropagation();"
-                                aria-label="Favorite">
-                            ♡
-                        </button>
+                            <button type="button"
+                                    class="heart-btn"
+                                    onclick="event.stopPropagation();"
+                                    aria-label="Favorite">
+                                ♡
+                            </button>
+                        </div>
+
+                        <div class="product-content">
+                            <h3>{{ product.name }}</h3>
+
+                            <p class="product-description">
+                                {% if product.description %}
+                                    {{ product.description|truncatewords:16 }}
+                                {% else %}
+                                    Свіжа піца з добірними інгредієнтами.
+                                {% endif %}
+                            </p>
+
+                            <div class="product-rating">
+                                <span>★★★★★</span>
+                                <small>4.9</small>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="product-content">
-                        <h3>{{ product.name }}</h3>
-
-                        {% if product.description %}
-                            <p class="product-description">
-                                {{ product.description|truncatewords:16 }}
-                            </p>
-                        {% endif %}
-
-                        <div class="product-rating">
-                            <span>★★★★★</span>
-                            <small>4.9</small>
-                        </div>
-
-                        <div class="product-footer">
-                            <strong>
-                                {% if product.category.slug == 'pizza' or product.category.slug == 'pizzas' %}
-                                    від {{ product.min_price }} ₴
-                                {% else %}
-                                    {{ product.min_price }} ₴
-                                {% endif %}
-                            </strong>
-
-                            {% if product.category.slug == 'pizza' or product.category.slug == 'pizzas' %}
-                                <button type="button">
-                                    Обрати
-                                </button>
+                    <div class="product-footer">
+                        <strong>
+                            {% if product.category.slug == 'pizza' or product.category.slug == 'pizzas' or product.category.slug == 'pici' or product.category.name == 'Піци' %}
+                                від {{ product.min_price }} ₴
                             {% else %}
-                                <button type="button"
-                                        onclick="event.stopPropagation(); alert('Кошик ще не підключений')">
-                                    В кошик
-                                </button>
+                                {{ product.min_price }} ₴
                             {% endif %}
-                        </div>
+                        </strong>
+
+                        {% if product.category.slug == 'pizza' or product.category.slug == 'pizzas' or product.category.slug == 'pici' or product.category.name == 'Піци' %}
+                            <button type="button"
+                                    class="product-action-btn"
+                                    hx-get="{% url 'main:product_detail' product.slug %}"
+                                    hx-target="#main-content"
+                                    hx-select="#main-content"
+                                    hx-swap="innerHTML show:window:top"
+                                    hx-push-url="true">
+                                Обрати
+                            </button>
+                        {% else %}
+                            {% with default_size=product.product_sizes.first %}
+                                {% if default_size %}
+                                    <form class="product-cart-form"
+                                          hx-post="{% url 'cart:add_to_cart' product.slug %}"
+                                          hx-target="#cart-container"
+                                          hx-swap="innerHTML">
+
+                                        {% csrf_token %}
+
+                                        <input type="hidden" name="size_id" value="{{ default_size.id }}">
+                                        <input type="hidden" name="quantity" value="1">
+
+                                        <button type="submit" class="product-action-btn">
+                                            В кошик
+                                        </button>
+                                    </form>
+                                {% else %}
+                                    <button type="button" class="product-action-btn" disabled>
+                                        Немає
+                                    </button>
+                                {% endif %}
+                            {% endwith %}
+                        {% endif %}
                     </div>
                 </article>
             {% endfor %}

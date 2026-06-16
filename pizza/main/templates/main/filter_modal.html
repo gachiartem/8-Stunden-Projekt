@@ -1,10 +1,10 @@
-<div class="pizza-filter-box">
+<div class="pizza-filter-box pizza-filter-box--compact">
     <div class="pizza-filter-header">
         <div>
             <span class="pizza-filter-kicker">Фільтрація меню</span>
             <h2>Знайти товар</h2>
             <p class="pizza-filter-subtitle">
-                Оберіть параметри, щоб швидше знайти потрібну піцу, напій або снек.
+                Оберіть параметри для швидкого пошуку.
             </p>
         </div>
 
@@ -19,7 +19,7 @@
           hx-get="{% if current_category %}{% url 'main:catalog' current_category %}{% else %}{% url 'main:catalog_all' %}{% endif %}"
           hx-target="#main-content"
           hx-select="#main-content"
-          hx-swap="innerHTML"
+          hx-swap="innerHTML show:window:top"
           hx-push-url="true"
           hx-on::after-request="document.getElementById('filter-modal').classList.add('hidden')">
 
@@ -34,7 +34,7 @@
                 <input type="search"
                        name="q"
                        value="{{ filter_params.q }}"
-                       placeholder="Наприклад: Франческо, кола, кабаноси">
+                       placeholder="Франческо, кола, кабаноси">
             </div>
         </div>
 
@@ -103,7 +103,7 @@
                 <input type="text"
                        name="description"
                        value="{{ filter_params.description }}"
-                       placeholder="Наприклад: сир, бекон, курка, томати">
+                       placeholder="Сир, бекон, курка, томати">
             </div>
         </div>
 
@@ -113,7 +113,7 @@
                hx-get="{% if current_category %}{% url 'main:catalog' current_category %}{% else %}{% url 'main:catalog_all' %}{% endif %}"
                hx-target="#main-content"
                hx-select="#main-content"
-               hx-swap="innerHTML"
+               hx-swap="innerHTML show:window:top"
                hx-push-url="true"
                hx-on::after-request="document.getElementById('filter-modal').classList.add('hidden')">
                 Скинути

@@ -6,19 +6,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}La.pizza — Seafood Pizza{% endblock %}</title>
 
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=40">
     {% block extra_css %}{% endblock %}
 
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
 </head>
+<div id="cart-container"></div>
 <body>
     <div id="overlay" class="overlay md-hidden" aria-hidden="true"></div>
 
     <aside id="mobileMenu" class="mobile-menu md-hidden" aria-label="Мобільне меню">
         <div class="mobile-menu-inner">
             <div class="mobile-menu-header">
-                <a href="{% url 'main:index' %}" class="brand-logo mobile-logo">
+                <a href="{% url 'main:index' %}"
+                   hx-get="{% url 'main:index' %}"
+                   hx-target="#main-content"
+                   hx-swap="innerHTML"
+                   hx-push-url="true"
+                   class="brand-logo mobile-logo">
                     La.<span>pizza</span>
                 </a>
 
@@ -33,7 +38,7 @@
                   hx-get="{% url 'main:catalog_all' %}"
                   hx-target="#main-content"
                   hx-select="#main-content"
-                  hx-swap="innerHTML"
+                  hx-swap="innerHTML show:window:top"
                   hx-push-url="true">
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15z"/>
@@ -45,8 +50,8 @@
                 <a href="{% url 'main:index' %}"
                    hx-get="{% url 'main:index' %}"
                    hx-target="#main-content"
-                   hx-push-url="true"
                    hx-swap="innerHTML"
+                   hx-push-url="true"
                    class="mobile-nav-link {% if not current_category %}text-orange{% endif %}">
                     Головна
                 </a>
@@ -55,15 +60,37 @@
                     <a href="{% url 'main:catalog' category.slug %}"
                        hx-get="{% url 'main:catalog' category.slug %}"
                        hx-target="#main-content"
-                       hx-swap="innerHTML"
+                       hx-select="#main-content"
+                       hx-swap="innerHTML show:window:top"
                        hx-push-url="true"
                        class="mobile-nav-link {% if current_category == category.slug %}text-orange{% endif %}">
                         {{ category.name|title }}
                     </a>
                 {% endfor %}
 
-                <a href="javascript:void(0)" class="mobile-nav-link">Про нас</a>
-                <a href="javascript:void(0)" class="mobile-nav-link">Контакти</a>
+                <a href="{% url 'cart:cart_modal' %}"
+                   id="mobileCart"
+                   class="cart-btn cart-btn--orange"
+                   hx-get="{% url 'cart:cart_modal' %}"
+                   hx-target="#cart-container"
+                   hx-swap="innerHTML"
+                   aria-label="Кошик">
+
+                    <span class="cart-btn-icon">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M6 6h15l-1.6 8.1a2 2 0 0 1-2 1.6H8.2a2 2 0 0 1-2-1.7L4.8 3H2"/>
+                            <path d="M9 21a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM18 21a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/>
+                        </svg>
+                    </span>
+
+                    <span class="cart-btn-text">
+                        Кошик
+                        <span class="cart-count-inline js-header-cart-count"
+                              {% if cart_total_items <= 0 %}style="display: none;"{% endif %}>
+                            {% if cart_total_items > 0 %}({{ cart_total_items }}){% endif %}
+                        </span>
+                    </span>
+                </a>
             </nav>
         </div>
     </aside>
@@ -84,18 +111,20 @@
                       hx-get="{% url 'main:catalog_all' %}"
                       hx-target="#main-content"
                       hx-select="#main-content"
-                      hx-swap="innerHTML"
+                      hx-swap="innerHTML show:window:top"
                       hx-push-url="true">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15z"/>
                     </svg>
+
                     <input type="search" name="q" placeholder="Search for pizza, drinks, etc...">
+
                     <button type="submit" aria-label="Пошук">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M21 21l-4.35-4.35"/>
-                        <circle cx="10.5" cy="10.5" r="7.5"/>
-                    </svg>
-                </button>
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M21 21l-4.35-4.35"/>
+                            <circle cx="10.5" cy="10.5" r="7.5"/>
+                        </svg>
+                    </button>
                 </form>
 
                 <nav class="desktop-nav" aria-label="Основна навігація">
@@ -113,7 +142,7 @@
                            hx-get="{% url 'main:catalog' category.slug %}"
                            hx-target="#main-content"
                            hx-select="#main-content"
-                           hx-swap="innerHTML"
+                           hx-swap="innerHTML show:window:top"
                            hx-push-url="true"
                            class="nav-link {% if current_category == category.slug %}active-link{% endif %}">
                             {{ category.name|title }}
@@ -128,12 +157,28 @@
                         </svg>
                     </a>
 
-                    <a href="javascript:void(0)" id="desktopCart" class="cart-btn" aria-label="Кошик">
-                        <svg viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M6 6h15l-1.6 8.1a2 2 0 0 1-2 1.6H8.2a2 2 0 0 1-2-1.7L4.8 3H2"/>
-                            <path d="M9 21a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM18 21a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/>
-                        </svg>
-                        <span>Кошик</span>
+                    <a href="{% url 'cart:cart_modal' %}"
+                       id="desktopCart"
+                       class="cart-btn cart-btn--orange"
+                       hx-get="{% url 'cart:cart_modal' %}"
+                       hx-target="#cart-container"
+                       hx-swap="innerHTML"
+                       aria-label="Кошик">
+
+                        <span class="cart-btn-icon">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M6 6h15l-1.6 8.1a2 2 0 0 1-2 1.6H8.2a2 2 0 0 1-2-1.7L4.8 3H2"/>
+                                <path d="M9 21a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM18 21a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/>
+                            </svg>
+                        </span>
+
+                        <span class="cart-btn-text">
+                            Кошик
+                            <span class="cart-count-inline js-header-cart-count"
+                                  {% if cart_total_items <= 0 %}style="display: none;"{% endif %}>
+                                {% if cart_total_items > 0 %}({{ cart_total_items }}){% endif %}
+                            </span>
+                        </span>
                     </a>
                 </div>
 
@@ -157,11 +202,13 @@
             <div class="page-container footer-grid">
                 <a href="{% url 'main:index' %}" class="brand-logo footer-logo">La.<span>pizza</span></a>
                 <p>© 2026 La.pizza. All rights reserved.</p>
+
                 <nav class="footer-links">
                     <a href="javascript:void(0)">Privacy Policy</a>
                     <a href="javascript:void(0)">Terms of Service</a>
                     <a href="javascript:void(0)">Refund Policy</a>
                 </nav>
+
                 <div class="social-links">
                     <a href="javascript:void(0)" aria-label="Instagram">◎</a>
                     <a href="javascript:void(0)" aria-label="Facebook">f</a>
@@ -171,15 +218,129 @@
             </div>
         </footer>
     </div>
+
     <div id="filter-modal" class="hidden filter-modal-wrapper">
         <div class="filter-modal-backdrop"
-            onclick="document.getElementById('filter-modal').classList.add('hidden')"></div>
+             onclick="document.getElementById('filter-modal').classList.add('hidden')"></div>
 
         <div class="filter-modal-panel">
             <div id="filter-modal-content"></div>
         </div>
     </div>
+
+    <div id="cart-container"></div>
+
     <script>
+        function updateHeaderCartCount(totalItems) {
+            const countElements = document.querySelectorAll('.js-header-cart-count');
+            const count = parseInt(totalItems || 0, 10);
+
+            countElements.forEach(function (countElement) {
+                if (count > 0) {
+                    countElement.textContent = '(' + count + ')';
+                    countElement.style.display = 'inline';
+                } else {
+                    countElement.textContent = '';
+                    countElement.style.display = 'none';
+                }
+            });
+        }
+
+        function refreshHeaderCartCount() {
+            fetch("{% url 'cart:cart_count' %}", {
+                method: "GET",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            })
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (data) {
+                updateHeaderCartCount(data.total_items);
+            })
+            .catch(function (error) {
+                console.error("Cart count update error:", error);
+            });
+        }
+
+        function closeCart() {
+            const modal = document.getElementById('cart-modal');
+            const overlay = document.getElementById('cart-overlay');
+            const container = document.getElementById('cart-container');
+
+            if (modal) modal.classList.remove('open');
+            if (overlay) overlay.classList.remove('open');
+
+            setTimeout(function () {
+                if (container) container.innerHTML = '';
+            }, 260);
+        }
+
+        document.body.addEventListener('htmx:afterSwap', function (event) {
+            if (event.detail.target && event.detail.target.id === 'cart-container') {
+                refreshHeaderCartCount();
+            }
+        });
+
+        document.body.addEventListener('htmx:afterRequest', function (event) {
+            const element = event.detail.elt;
+
+            if (!element) return;
+
+            if (
+                element.closest('.product-cart-form') ||
+                element.closest('.detail-cart-form') ||
+                element.closest('.cart-qty') ||
+                element.classList.contains('cart-item-remove') ||
+                element.classList.contains('cart-qty-btn')
+            ) {
+                setTimeout(refreshHeaderCartCount, 80);
+            }
+        });
+
+        document.body.addEventListener('htmx:confirm', function (event) {
+            if (!event.detail.question) return;
+
+            event.preventDefault();
+
+            const confirmBox = document.getElementById('pizza-confirm');
+            const confirmText = document.getElementById('pizza-confirm-text');
+            const btnOk = document.getElementById('pizza-confirm-ok');
+            const btnCancel = document.getElementById('pizza-confirm-cancel');
+            const backdrop = confirmBox ? confirmBox.querySelector('.pizza-confirm-backdrop') : null;
+
+            if (!confirmBox || !btnOk || !btnCancel) {
+                event.detail.issueRequest(true);
+                return;
+            }
+
+            confirmText.textContent = event.detail.question;
+            confirmBox.classList.add('open');
+
+            function closeConfirm() {
+                confirmBox.classList.remove('open');
+                btnOk.onclick = null;
+                btnCancel.onclick = null;
+                if (backdrop) backdrop.onclick = null;
+            }
+
+            btnOk.onclick = function () {
+                closeConfirm();
+                event.detail.issueRequest(true);
+            };
+
+            btnCancel.onclick = function () {
+                closeConfirm();
+            };
+
+            if (backdrop) {
+                backdrop.onclick = function () {
+                    closeConfirm();
+                };
+            }
+        });
+
         document.addEventListener('DOMContentLoaded', function () {
             const menuToggle = document.getElementById('menuToggle');
             const closeMenu = document.getElementById('closeMenu');
@@ -188,29 +349,76 @@
 
             function openMobileMenu() {
                 if (!mobileMenu || !overlay) return;
+
                 mobileMenu.classList.add('open');
                 overlay.classList.add('active');
-                if (menuToggle) menuToggle.classList.add('active');
+
+                if (menuToggle) {
+                    menuToggle.classList.add('active');
+                }
+
                 document.body.classList.add('menu-open');
             }
 
             function closeMobileMenu() {
-                if (mobileMenu) mobileMenu.classList.remove('open');
-                if (overlay) overlay.classList.remove('active');
-                if (menuToggle) menuToggle.classList.remove('active');
+                if (mobileMenu) {
+                    mobileMenu.classList.remove('open');
+                }
+
+                if (overlay) {
+                    overlay.classList.remove('active');
+                }
+
+                if (menuToggle) {
+                    menuToggle.classList.remove('active');
+                }
+
                 document.body.classList.remove('menu-open');
             }
 
-            if (menuToggle) menuToggle.addEventListener('click', openMobileMenu);
-            if (closeMenu) closeMenu.addEventListener('click', closeMobileMenu);
-            if (overlay) overlay.addEventListener('click', closeMobileMenu);
+            function cleanUrl(url) {
+                if (!url) return '';
+                return url.split('?')[0];
+            }
+
+            function updateActiveNavLinks() {
+                const currentPath = window.location.pathname;
+
+                document.querySelectorAll('.nav-link').forEach(function (link) {
+                    link.classList.toggle(
+                        'active-link',
+                        cleanUrl(link.getAttribute('href')) === currentPath
+                    );
+                });
+
+                document.querySelectorAll('.mobile-nav-link').forEach(function (link) {
+                    link.classList.toggle(
+                        'text-orange',
+                        cleanUrl(link.getAttribute('href')) === currentPath
+                    );
+                });
+            }
+
+            if (menuToggle) {
+                menuToggle.addEventListener('click', openMobileMenu);
+            }
+
+            if (closeMenu) {
+                closeMenu.addEventListener('click', closeMobileMenu);
+            }
+
+            if (overlay) {
+                overlay.addEventListener('click', closeMobileMenu);
+            }
 
             document.querySelectorAll('.mobile-nav-link').forEach(function (link) {
                 link.addEventListener('click', closeMobileMenu);
             });
 
             window.addEventListener('resize', function () {
-                if (window.innerWidth >= 768) closeMobileMenu();
+                if (window.innerWidth >= 768) {
+                    closeMobileMenu();
+                }
             });
 
             document.addEventListener('htmx:afterSettle', function (event) {
@@ -229,26 +437,9 @@
                 }
             });
 
-            function cleanUrl(url) {
-                if (!url) return '';
-                return url.split('?')[0];
-            }
-
-            
-            function updateActiveNavLinks() {
-                const currentPath = window.location.pathname;
-
-                document.querySelectorAll('.nav-link').forEach(function (link) {
-                    link.classList.toggle('active-link', cleanUrl(link.getAttribute('href')) === currentPath);
-                });
-
-                document.querySelectorAll('.mobile-nav-link').forEach(function (link) {
-                    link.classList.toggle('text-orange', cleanUrl(link.getAttribute('href')) === currentPath);
-                });
-            }
-
             document.addEventListener('click', function (e) {
                 const categoryBtn = e.target.closest('.category-btn');
+
                 if (!categoryBtn) return;
 
                 document.querySelectorAll('.category-btn').forEach(function (btn) {
@@ -257,8 +448,12 @@
 
                 categoryBtn.classList.add('category-btn--active');
             });
+
+            updateActiveNavLinks();
+            refreshHeaderCartCount();
         });
     </script>
+
     {% block extra_js %}{% endblock %}
 </body>
 </html>

@@ -1,0 +1,23 @@
+<a href="{% url 'cart:cart_modal' %}"
+   id="desktopCart"
+   class="cart-btn"
+   hx-get="{% url 'cart:cart_modal' %}"
+   hx-target="#cart-container"
+   hx-swap="innerHTML"
+   aria-label="Відкрити кошик">
+
+    <span class="cart-btn-icon">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 6h15l-1.6 8.1a2 2 0 0 1-2 1.6H8.2a2 2 0 0 1-2-1.7L4.8 3H2"/>
+            <path d="M9 21a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM18 21a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z"/>
+        </svg>
+    </span>
+
+    <span class="cart-btn-text">Кошик</span>
+
+    {% if cart_total_items > 0 %}
+        <span class="cart-badge">{{ cart_total_items }}</span>
+    {% else %}
+        <span class="cart-badge" style="display: none;">0</span>
+    {% endif %}
+</a>

@@ -77,10 +77,18 @@
             </div>
 
             
-            <form class="detail-cart-form">
-                {% with product_sizes=product.product_sizes.all %}
-                    {% if product_sizes %}
-                        {% if product_sizes|length > 1 %}
+            <form class="detail-cart-form"
+            hx-post="{% url 'cart:add_to_cart' product.slug %}"
+            hx-target="#cart-container"
+            hx-swap="innerHTML">
+
+            {% csrf_token %}
+            <input type="hidden" name="quantity" value="1">
+
+            {% with product_sizes=product.product_sizes.all %}
+                {% if product_sizes %}
+                    {% if product_sizes|length > 1 %}
+
                         <div class="detail-block">
                             <h3>
                                 {% if product.category.slug == 'pizza' or product.category.slug == 'pizzas' %}
@@ -104,7 +112,11 @@
                                             {% if product_size.stock <= 0 %}disabled{% endif %}>
 
                                         <span class="size-card">
-                                            <strong>{{ product_size.size.name }}</strong>
+                                            {% if product_size.size %}
+                                                <strong>{{ product_size.size.name }}</strong>
+                                            {% else %}
+                                                <strong>Стандарт</strong>
+                                            {% endif %}
 
                                             {% if product_size.stock <= 0 %}
                                                 <small>Немає</small>
@@ -144,21 +156,21 @@
                         {% endfor %}
                     {% endif %}
 
-                        <button id="add-to-cart-btn"
-                                type="button"
-                                class="detail-add-btn"
-                                onclick="alert('Кошик ще не підключений')">
-                            Додати в кошик
-                        </button>
-                    {% else %}
-                        <button type="button"
-                                class="detail-add-btn"
-                                disabled>
-                            Немає в наявності
-                        </button>
-                    {% endif %}
-                {% endwith %}
-            </form>
+                    <button id="add-to-cart-btn"
+                            type="submit"
+                            class="detail-add-btn">
+                        Додати в кошик
+                    </button>
+
+                {% else %}
+                    <button type="button"
+                            class="detail-add-btn"
+                            disabled>
+                        Немає в наявності
+                    </button>
+                {% endif %}
+            {% endwith %}
+        </form>
 
             <div class="detail-block">
                 <h3 class="ingredients-text">

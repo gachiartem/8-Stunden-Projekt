@@ -1,0 +1,68 @@
+<div class="cart-item" id="cart-item-{{ item.id }}">
+    <div class="cart-item-image">
+        {% if item.product.main_image %}
+            <img src="{{ item.product.main_image.url }}" alt="{{ item.product.name }}">
+        {% else %}
+            <div class="cart-item-placeholder">🍕</div>
+        {% endif %}
+    </div>
+
+    <div class="cart-item-content">
+        <div class="cart-item-top">
+            <div>
+                <h3>{{ item.product.name }}</h3>
+
+                {% if item.product_size.size %}
+                    <p class="cart-item-meta">
+                        {{ item.product_size.size.name }}
+                    </p>
+                {% else %}
+                    <p class="cart-item-meta">
+                        Стандарт
+                    </p>
+                {% endif %}
+            </div>
+
+            <button type="button"
+            class="cart-item-remove"
+            hx-post="{% url 'cart:remove_item' item.id %}"
+            hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+            hx-target="#cart-container"
+            hx-swap="innerHTML">
+        ×
+    </button>
+        </div>
+
+        <div class="cart-item-bottom">
+            <div class="cart-qty">
+                <button type="button"
+                        class="cart-qty-btn"
+                        hx-post="{% url 'cart:update_item' item.id %}"
+                        hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                        hx-vals='{"quantity": "{{ item.quantity|add:-1 }}"}'
+                        hx-target="#cart-container"
+                        hx-swap="innerHTML"
+                        {% if item.quantity <= 1 %}disabled{% endif %}>
+                    −
+                </button>
+
+                <span class="cart-qty-value">{{ item.quantity }}</span>
+
+                <button type="button"
+                        class="cart-qty-btn"
+                        hx-post="{% url 'cart:update_item' item.id %}"
+                        hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                        hx-vals='{"quantity": "{{ item.quantity|add:1 }}"}'
+                        hx-target="#cart-container"
+                        hx-swap="innerHTML">
+                    +
+                </button>
+            </div>
+
+            <div class="cart-item-price">
+                <span>{{ item.product_size.price }} ₴</span>
+                <strong>{{ item.total_price }} ₴</strong>
+            </div>
+        </div>
+    </div>
+</div>

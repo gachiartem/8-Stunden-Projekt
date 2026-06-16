@@ -1,0 +1,56 @@
+<div class="cart-empty-state">
+    <div class="cart-empty-icon cart-empty-icon--pizza">
+        <svg viewBox="0 0 64 64" aria-hidden="true">
+            <path d="M10 23 32 12l22 11v25L32 58 10 48V23Z"/>
+            <path d="M10 23 32 34l22-11"/>
+            <path d="M32 34v24"/>
+            <path d="M20 28l22-11"/>
+            <path d="M22 40h8"/>
+            <path d="M38 40h6"/>
+        </svg>
+    </div>
+
+    <h3>Кошик порожній</h3>
+
+    <p>
+        Додайте улюблену піцу, напої або снеки, щоб оформити замовлення.
+    </p>
+
+    <a href="{% url 'main:catalog_all' %}"
+       class="cart-empty-btn"
+       hx-get="{% url 'main:catalog_all' %}"
+       hx-target="#main-content"
+       hx-select="#main-content"
+       hx-swap="innerHTML show:window:top"
+       hx-push-url="true"
+       onclick="closeCart()">
+        Перейти до меню
+    </a>
+
+    <div class="cart-empty-delivery">
+        <span>🚚</span>
+        <p>Безкоштовна доставка від 400 ₴</p>
+    </div>
+</div>
+
+<script>
+    const cartCount = document.getElementById('cart-count');
+    if (cartCount) {
+        cartCount.textContent = '0';
+    }
+
+    const cartBadge = document.querySelector('.cart-badge');
+    if (cartBadge) {
+        cartBadge.textContent = '0';
+        cartBadge.style.display = 'none';
+    }
+
+    const cartSummary = document.getElementById('cart-summary');
+    if (cartSummary) {
+        cartSummary.style.display = 'none';
+    }
+
+    if (typeof updateHeaderCartCount === 'function') {
+        updateHeaderCartCount(0);
+    }
+</script>
