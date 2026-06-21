@@ -52,12 +52,6 @@
                                 <div class="product-placeholder">🍕</div>
                             {% endif %}
 
-                            <button type="button"
-                                    class="heart-btn"
-                                    onclick="event.stopPropagation();"
-                                    aria-label="Додати в улюблені">
-                                ♡
-                            </button>
                         </div>
 
                         <div class="product-content">
@@ -74,8 +68,21 @@
                             </p>
 
                             <div class="product-rating">
-                                <span>★★★★★</span>
-                                <small>4.9</small>
+                                <span>
+                                    {% if product.review_count > 0 %}
+                                        {{ product.filled_hearts }}{{ product.empty_hearts }}
+                                    {% else %}
+                                        ✩✩✩✩✩
+                                    {% endif %}
+                                </span>
+
+                                <small>
+                                    {% if product.review_count > 0 %}
+                                        {{ product.average_rating }}
+                                    {% else %}
+                                        Немає
+                                    {% endif %}
+                                </small>
                             </div>
                         </div>
                     </div>

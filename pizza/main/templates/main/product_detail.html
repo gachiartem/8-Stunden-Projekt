@@ -63,6 +63,24 @@
             <div class="detail-category">{{ product.category.name }}</div>
 
             <h1 class="detail-title">{{ product.name }}</h1>
+            
+            <a href="#reviews-section" class="product-rating-preview">
+                <span class="product-rating-preview-hearts">
+                    {% if product.review_count > 0 %}
+                        {{ product.filled_hearts }}{{ product.empty_hearts }}
+                    {% else %}
+                        ✩✩✩✩✩
+                    {% endif %}
+                </span>
+
+                <span class="product-rating-preview-text">
+                    {% if product.review_count > 0 %}
+                        {{ product.average_rating }} / 5 · {{ product.review_count }} відгуки
+                    {% else %}
+                        Немає відгуків
+                    {% endif %}
+                </span>
+            </a>
 
             <p class="detail-desc">
                 {% if product.description %}
@@ -195,57 +213,282 @@
             </div>
         </div>
     </section>
-
+    
     {% if related_products %}
         <section class="related-section">
             <h2>Схожі товари</h2>
 
             <div class="products-grid">
                 {% for related_product in related_products %}
-                    <article class="product-card"
+                    <article class="product-card">
+
+                        <div class="product-open-area"
                             hx-get="{% url 'main:product_detail' related_product.slug %}"
                             hx-target="#main-content"
                             hx-select="#main-content"
-                            hx-swap="innerHTML"
+                            hx-swap="innerHTML show:window:top"
                             hx-push-url="true">
 
-                        <div class="product-image">
-                            {% if related_product.main_image %}
-                                <img src="{{ related_product.main_image.url }}" alt="{{ related_product.name }}">
-                            {% else %}
-                                <div class="product-placeholder">🍕</div>
-                            {% endif %}
-                        </div>
-
-                        <div class="product-content">
-                            <h3>{{ related_product.name }}</h3>
-
-                            <div class="product-footer">
-                                <strong>
-                                    {% if related_product.category.slug == 'pizza' or related_product.category.slug == 'pizzas' %}
-                                        від {{ related_product.min_price }} ₴
-                                    {% else %}
-                                        {{ related_product.min_price }} ₴
-                                    {% endif %}
-                                </strong>
-
-                                {% if related_product.category.slug == 'pizza' or related_product.category.slug == 'pizzas' %}
-                                    <button type="button">
-                                        Обрати
-                                    </button>
+                            <div class="product-image">
+                                {% if related_product.main_image %}
+                                    <img src="{{ related_product.main_image.url }}" alt="{{ related_product.name }}">
                                 {% else %}
-                                    <button type="button"
-                                            onclick="event.stopPropagation(); alert('Кошик ще не підключений')">
-                                        В кошик
-                                    </button>
+                                    <div class="product-placeholder">🍕</div>
                                 {% endif %}
                             </div>
+
+                            <div class="product-content">
+                                <h3>{{ related_product.name }}</h3>
+
+                                <div class="product-rating">
+                                    <span>
+                                        {% if related_product.review_count > 0 %}
+                                            {{ product.filled_hearts }}{{ product.empty_hearts }}
+                                        {% else %}
+                                            ☆☆☆☆☆
+                                        {% endif %}
+                                    </span>
+
+                                    <small>
+                                        {% if related_product.review_count > 0 %}
+                                            {{ related_product.average_rating }}
+                                        {% else %}
+                                            0.0
+                                        {% endif %}
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="product-footer">
+                            <strong>
+                                {% if related_product.category.slug == 'pizza' or related_product.category.slug == 'pizzas' %}
+                                    від {{ related_product.min_price }} ₴
+                                {% else %}
+                                    {{ related_product.min_price }} ₴
+                                {% endif %}
+                            </strong>
+
+                            {% if related_product.category.slug == 'pizza' or related_product.category.slug == 'pizzas' %}
+                                <button type="button"
+                                        hx-get="{% url 'main:product_detail' related_product.slug %}"
+                                        hx-target="#main-content"
+                                        hx-select="#main-content"
+                                        hx-swap="innerHTML show:window:top"
+                                        hx-push-url="true">
+                                    Обрати
+                                </button>
+                            {% else %}
+                                <form method="post"
+                                    class="product-cart-form"
+                                    hx-post="{% url 'cart:add_to_cart' related_product.slug %}"
+                                    hx-target="#cart-container"
+                                    hx-swap="innerHTML">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="quantity" value="1">
+
+                                    <button type="submit">
+                                        В кошик
+                                    </button>
+                                </form>
+                            {% endif %}
                         </div>
                     </article>
                 {% endfor %}
             </div>
         </section>
     {% endif %}
+    <section id="reviews-section" class="product-reviews-minimal">
+    <div class="reviews-minimal-head">
+        <div>
+            <span class="reviews-mini-kicker">Відгуки клієнтів</span>
+            <h2>Відгуки</h2>
+        </div>
+
+        <div class="reviews-mini-actions">
+            <div class="reviews-mini-score">
+                <strong>
+                    {% if product.review_count > 0 %}
+                        {{ product.average_rating }}
+                    {% else %}
+                        0.0
+                    {% endif %}
+                </strong>
+
+                <span>
+                    {% if product.review_count > 0 %}
+                        {{ product.filled_hearts }}{{ product.empty_hearts }}
+                    {% else %}
+                        ✩✩✩✩✩
+                    {% endif %}
+                </span>
+
+                <small>{{ product.review_count }} відгуки</small>
+            </div>
+
+            {% if request.user.is_authenticated %}
+                <button type="button"
+                        class="open-review-modal-btn"
+                        onclick="openReviewModal()">
+                    {% if existing_review %}
+                        Редагувати відгук
+                    {% else %}
+                        Додати відгук
+                    {% endif %}
+                </button>
+            {% else %}
+                <a href="{% url 'users:login' %}"
+                   hx-get="{% url 'users:login' %}"
+                   hx-target="#main-content"
+                   hx-select="#main-content"
+                   hx-swap="innerHTML show:window:top"
+                   hx-push-url="true"
+                   class="open-review-modal-btn">
+                    Увійти для відгуку
+                </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="reviews-minimal-list">
+        {% for review in product.reviews.all %}
+            <article class="review-mini-card">
+                <div class="review-mini-top">
+                    <div>
+                        <strong>
+                            {% if review.user.first_name or review.user.last_name %}
+                                {{ review.user.first_name }} {{ review.user.last_name }}
+                            {% else %}
+                                {{ review.user.email }}
+                            {% endif %}
+                        </strong>
+
+                        <small>{{ review.updated_at|date:"d.m.Y H:i" }}</small>
+                    </div>
+
+                    <span>{{ review.filled_hearts }}{{ review.empty_hearts }}</span>
+                </div>
+
+                <p>{{ review.text|linebreaksbr }}</p>
+            </article>
+        {% empty %}
+            <div class="reviews-mini-empty">
+                Поки що немає відгуків. Станьте першим, хто оцінить цей товар.
+            </div>
+        {% endfor %}
+    </div>
+</section>
+
+{% if request.user.is_authenticated %}
+    <div id="review-modal" class="review-modal">
+        <div class="review-modal-backdrop" onclick="closeReviewModal()"></div>
+
+        <div class="review-modal-card">
+            <button type="button"
+                    class="review-modal-close"
+                    onclick="closeReviewModal()">
+                ×
+            </button>
+
+            <span class="reviews-mini-kicker">Ваш відгук</span>
+
+            <h3>
+                {% if existing_review %}
+                    Редагувати відгук
+                {% else %}
+                    Додати відгук
+                {% endif %}
+            </h3>
+
+            <form method="post"
+                  action="{% url 'main:add_product_review' product.slug %}"
+                  class="review-modal-form">
+                {% csrf_token %}
+
+                <div class="review-modal-field">
+                    <label>Оцінка</label>
+
+                    <div class="review-modal-rating">
+                        <label>
+                            <input type="radio" name="rating" value="5"
+                                   {% if existing_review and existing_review.rating == 5 %}checked{% endif %}
+                                   {% if not existing_review %}checked{% endif %}>
+                            <span>★★★★★</span>
+                        </label>
+
+                        <label>
+                            <input type="radio" name="rating" value="4"
+                                   {% if existing_review and existing_review.rating == 4 %}checked{% endif %}>
+                            <span>★★★★✩</span>
+                        </label>
+
+                        <label>
+                            <input type="radio" name="rating" value="3"
+                                   {% if existing_review and existing_review.rating == 3 %}checked{% endif %}>
+                            <span>★★★✩✩</span>
+                        </label>
+
+                        <label>
+                            <input type="radio" name="rating" value="2"
+                                   {% if existing_review and existing_review.rating == 2 %}checked{% endif %}>
+                            <span>★★✩✩✩</span>
+                        </label>
+
+                        <label>
+                            <input type="radio" name="rating" value="1"
+                                   {% if existing_review and existing_review.rating == 1 %}checked{% endif %}>
+                            <span>★✩✩✩✩</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="review-modal-field">
+                    <label for="review-text">Відгук</label>
+
+                    <textarea id="review-text"
+                              name="text"
+                              rows="4"
+                              maxlength="1000"
+                              placeholder="Напишіть коротко вашу думку..."
+                              required>{% if existing_review %}{{ existing_review.text }}{% endif %}</textarea>
+                </div>
+
+                <button type="submit" class="review-modal-submit">
+                    {% if existing_review %}
+                        Зберегти зміни
+                    {% else %}
+                        Надіслати відгук
+                    {% endif %}
+                </button>
+            </form>
+        </div>
+    </div>
+{% endif %}
+
+<script>
+    function openReviewModal() {
+        const modal = document.getElementById('review-modal');
+        if (!modal) return;
+
+        modal.classList.add('open');
+        document.body.classList.add('modal-open');
+    }
+
+    function closeReviewModal() {
+        const modal = document.getElementById('review-modal');
+        if (!modal) return;
+
+        modal.classList.remove('open');
+        document.body.classList.remove('modal-open');
+    }
+
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') {
+            closeReviewModal();
+        }
+    });
+</script>
+
 </main>
 
 <script>

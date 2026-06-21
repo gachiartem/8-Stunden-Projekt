@@ -8,10 +8,10 @@
                     🔥 Бестселер
                 </div>
 
-                <div class="rating-box">
+                <div class="rating-box1">
                     <div class="stars">★★★★★</div>
                     <strong>4.9</strong>
-                    <span class="rating-text">(126 відгуків)</span>
+                    <span class="rating-text1">(11 відгуків)</span>
                 </div>
 
                 <h1 class="hero-title">
@@ -27,22 +27,49 @@
                 </div>
 
                 <div class="hero-buttons">
-                    <button type="button" class="btn-primary">
-                        В кошик
-                        <svg viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M6 6h15l-1.5 9h-12L6 6Z" stroke-linejoin="round"/>
-                            <path d="M6 6 5 3H2" stroke-linecap="round"/>
-                            <circle cx="9" cy="20" r="1"/>
-                            <circle cx="18" cy="20" r="1"/>
-                        </svg>
-                    </button>
+                    {% if seafood_pizza and seafood_pizza_size %}
+                        <form method="post"
+                            class="hero-add-form"
+                            hx-post="{% url 'cart:add_to_cart' seafood_pizza.slug %}"
+                            hx-target="#cart-container"
+                            hx-swap="innerHTML">
+                            {% csrf_token %}
 
-                    <button type="button" class="btn-secondary">
-                        Детальніше
-                        <svg viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M4 7h10M18 7h2M4 17h2M10 17h10M8 5v4M16 15v4" stroke-linecap="round"/>
-                        </svg>
-                    </button>
+                            <input type="hidden" name="quantity" value="1">
+                            <input type="hidden" name="size_id" value="{{ seafood_pizza_size.id }}">
+
+                            <button type="submit" class="btn-primary">
+                                В кошик
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M6 6h15l-1.5 9h-12L6 6Z" stroke-linejoin="round"/>
+                                    <path d="M6 6 5 3H2" stroke-linecap="round"/>
+                                    <circle cx="9" cy="20" r="1"/>
+                                    <circle cx="18" cy="20" r="1"/>
+                                </svg>
+                            </button>
+                        </form>
+
+                        <a href="{% url 'main:product_detail' seafood_pizza.slug %}"
+                        hx-get="{% url 'main:product_detail' seafood_pizza.slug %}"
+                        hx-target="#main-content"
+                        hx-select="#main-content"
+                        hx-swap="innerHTML show:window:top"
+                        hx-push-url="true"
+                        class="btn-secondary">
+                            Детальніше
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M4 7h10M18 7h2M4 17h2M10 17h10M8 5v4M16 15v4" stroke-linecap="round"/>
+                            </svg>
+                        </a>
+                    {% else %}
+                        <button type="button" class="btn-primary" disabled>
+                            Немає в наявності
+                        </button>
+
+                        <button type="button" class="btn-secondary" disabled>
+                            Детальніше
+                        </button>
+                    {% endif %}
                 </div>
 
                 <div class="compact-features">

@@ -44,7 +44,9 @@ INSTALLED_APPS = [
 
     'main',
     'cart',
-    'users'
+    'users',
+    'orders',
+    'payment'
 ]
 
 MIDDLEWARE = [
@@ -73,6 +75,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 
                 'cart.context_processors.cart_processor',
+                'main.context_processors.site_categories',
             ],
         },
     },
@@ -87,7 +90,7 @@ WSGI_APPLICATION = 'pizza.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'pizzadb',
+        'NAME': 'pizzabd',
         'USER': 'pizzadb',
         'PASSWORD': 'pizzadb',  
         'HOST': '127.0.0.1',  
@@ -142,3 +145,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 SESSION_COOKIE_AGE = 86400 #30 days
 SESSION_SAVE_EVERY_REQUEST = True
+
+AUTH_USER_MODEL = 'users.CustomUser'
+
+
+STRIPE_SECRET_KEY = "sk_test_51TkkwFL9AaRbNsZ73bmebYoRAk5paJzHzgUbpthEwnvMRHx88VstmN8vmdFCLc0SsRpVaov680AtsLZYRk1EDMjk00YSwxsAov"
+
+STRIPE_WEBBOOK_SECRET = "whsec_5b6c1933c93a230b5267ea6c3ecd3915bdf4719d1212ba82acce345e693d2d7a"

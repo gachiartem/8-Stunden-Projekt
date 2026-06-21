@@ -1,0 +1,241 @@
+{% load static %}
+
+<section class="checkout-page page-container">
+    <div class="checkout-layout">
+
+        <div class="checkout-left">
+            <nav class="breadcrumbs checkout-breadcrumbs">
+                <a href="{% url 'main:index' %}"
+                   hx-get="{% url 'main:index' %}"
+                   hx-target="#main-content"
+                   hx-select="#main-content"
+                   hx-swap="innerHTML show:window:top"
+                   hx-push-url="true">
+                    Головна
+                </a>
+
+                <span>/</span>
+                <span>Оформлення замовлення</span>
+            </nav>
+
+            <form method="post"
+                  id="order-form"
+                  class="checkout-form"
+                  hx-post="{% url 'orders:checkout' %}"
+                  hx-target="#main-content"
+                  hx-swap="innerHTML show:window:top">
+
+                {% csrf_token %}
+
+                {% if error_message %}
+                    <div class="checkout-error">
+                        {{ error_message }}
+                    </div>
+                {% endif %}
+
+                {% if form.non_field_errors %}
+                    <div class="checkout-error">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+                <div class="checkout-card">
+                    <div class="checkout-card-head">
+                        <span>01</span>
+                        <h2>Контактні дані</h2>
+                    </div>
+
+                    <div class="checkout-field">
+                        <label for="{{ form.email.id_for_label }}">Email</label>
+                        {{ form.email }}
+
+                        {% if form.email.errors %}
+                            <div class="form-error">{{ form.email.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="checkout-row">
+                        <div class="checkout-field">
+                            <label for="{{ form.first_name.id_for_label }}">Імʼя</label>
+                            {{ form.first_name }}
+
+                            {% if form.first_name.errors %}
+                                <div class="form-error">{{ form.first_name.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="checkout-field">
+                            <label for="{{ form.last_name.id_for_label }}">Прізвище</label>
+                            {{ form.last_name }}
+
+                            {% if form.last_name.errors %}
+                                <div class="form-error">{{ form.last_name.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="checkout-field">
+                        <label for="{{ form.phone.id_for_label }}">Телефон</label>
+                        {{ form.phone }}
+
+                        {% if form.phone.errors %}
+                            <div class="form-error">{{ form.phone.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="checkout-card">
+                    <div class="checkout-card-head">
+                        <span>02</span>
+                        <h2>Адреса доставки</h2>
+                    </div>
+
+                    <div class="checkout-field">
+                        <label for="{{ form.company.id_for_label }}">Компанія</label>
+                        {{ form.company }}
+
+                        {% if form.company.errors %}
+                            <div class="form-error">{{ form.company.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="checkout-field">
+                        <label for="{{ form.address1.id_for_label }}">Адреса</label>
+                        {{ form.address1 }}
+
+                        {% if form.address1.errors %}
+                            <div class="form-error">{{ form.address1.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="checkout-field">
+                        <label for="{{ form.address2.id_for_label }}">Квартира, підʼїзд, поверх</label>
+                        {{ form.address2 }}
+
+                        {% if form.address2.errors %}
+                            <div class="form-error">{{ form.address2.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="checkout-row checkout-row-3">
+                        <div class="checkout-field">
+                            <label for="{{ form.city.id_for_label }}">Місто</label>
+                            {{ form.city }}
+
+                            {% if form.city.errors %}
+                                <div class="form-error">{{ form.city.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="checkout-field">
+                            <label for="{{ form.province.id_for_label }}">Область</label>
+                            {{ form.province }}
+
+                            {% if form.province.errors %}
+                                <div class="form-error">{{ form.province.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="checkout-field">
+                            <label for="{{ form.postal_code.id_for_label }}">Індекс</label>
+                            {{ form.postal_code }}
+
+                            {% if form.postal_code.errors %}
+                                <div class="form-error">{{ form.postal_code.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="checkout-field">
+                        <label for="{{ form.delivery_instructions.id_for_label }}">Коментар до замовлення</label>
+                        {{ form.delivery_instructions }}
+
+                        {% if form.delivery_instructions.errors %}
+                            <div class="form-error">{{ form.delivery_instructions.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="checkout-card">
+                    <div class="checkout-card-head">
+                        <span>03</span>
+                        <h2>Оплата</h2>
+                    </div>
+
+                    <p class="checkout-payment-text">
+                        Після натискання кнопки ви перейдете на сторінку безпечної оплати Stripe.
+                    </p>
+
+                    <button type="submit"
+                            name="payment_provider"
+                            value="stripe"
+                            class="checkout-pay-btn">
+                        Оплатити через Stripe
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <aside class="checkout-summary">
+            <div class="checkout-summary-card">
+                <h2>Ваше замовлення</h2>
+
+                <div class="checkout-items">
+                    {% for item in cart_items %}
+                        <div class="checkout-item">
+                            <div class="checkout-item-image">
+                                {% if item.product.main_image %}
+                                    <img src="{{ item.product.main_image.url }}" alt="{{ item.product.name }}">
+                                {% else %}
+                                    <div class="checkout-item-placeholder">🍕</div>
+                                {% endif %}
+
+                                <span>{{ item.quantity }}</span>
+                            </div>
+
+                            <div class="checkout-item-info">
+                                <h3>{{ item.product.name }}</h3>
+
+                                {% if item.product_size and item.product_size.size %}
+                                    <p>{{ item.product_size.size.name }}</p>
+                                {% else %}
+                                    <p>Стандарт</p>
+                                {% endif %}
+                            </div>
+
+                            <div class="checkout-item-price">
+                                {% if item.product_size %}
+                                    {{ item.product_size.price }} ₴
+                                {% else %}
+                                    {{ item.product.min_price }} ₴
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="checkout-empty">
+                            Кошик порожній.
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div class="checkout-total-box">
+                    <div class="checkout-total-row">
+                        <span>Товарів</span>
+                        <strong>{{ cart.total_items }}</strong>
+                    </div>
+
+                    <div class="checkout-total-row">
+                        <span>Доставка</span>
+                        <strong>Уточнюється</strong>
+                    </div>
+
+                    <div class="checkout-total-row checkout-total-final">
+                        <span>Разом</span>
+                        <strong>{{ total_price }} ₴</strong>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+    </div>
+</section>

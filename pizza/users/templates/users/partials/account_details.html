@@ -1,0 +1,63 @@
+<div class="profile-card-head">
+    <div>
+        <span class="profile-card-kicker">Особисті дані</span>
+        <h2>Дані акаунта</h2>
+    </div>
+
+    <button type="button"
+            class="profile-edit-btn"
+            hx-get="{% url 'users:edit_account_details' %}"
+            hx-target="#account-details-content"
+            hx-swap="innerHTML">
+        Редагувати
+    </button>
+</div>
+
+<div class="profile-info-list">
+    <div class="profile-info-row">
+        <span>Імʼя</span>
+        <strong>{{ user.first_name }} {{ user.last_name }}</strong>
+    </div>
+
+    <div class="profile-info-row">
+        <span>Email</span>
+        <strong>{{ user.email }}</strong>
+    </div>
+
+    <div class="profile-info-row">
+        <span>Телефон</span>
+        <strong>{{ user.phone|default:"Не вказано" }}</strong>
+    </div>
+
+    <div class="profile-info-row">
+        <span>Компанія</span>
+        <strong>{{ user.company|default:"Не вказано" }}</strong>
+    </div>
+
+    <div class="profile-info-row">
+        <span>Адреса</span>
+        <strong>
+            {% if user.address1 or user.address2 %}
+                {{ user.address1|default:"" }}
+                {% if user.address2 %}, {{ user.address2 }}{% endif %}
+            {% else %}
+                Не вказано
+            {% endif %}
+        </strong>
+    </div>
+
+    <div class="profile-info-row">
+        <span>Місто</span>
+        <strong>{{ user.city|default:"Не вказано" }}</strong>
+    </div>
+
+    <div class="profile-info-row">
+        <span>Область / регіон</span>
+        <strong>{{ user.province|default:"Не вказано" }}</strong>
+    </div>
+
+    <div class="profile-info-row">
+        <span>Поштовий індекс</span>
+        <strong>{{ user.postal_code|default:"Не вказано" }}</strong>
+    </div>
+</div>

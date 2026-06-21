@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import Category, Size , Product , \
-    ProductImage, ProductSize, NewsletterSubscriber
+    ProductImage, ProductSize, NewsletterSubscriber, ProductReview
 
 
 class ProductImageInline(admin.TabularInline):
@@ -37,3 +37,42 @@ admin.site.register(Category, CategoryAdmin)
 admin.site.register(Size, SizeAdmin)
 admin.site.register(Product, ProductAdmin)
 admin.site.register(NewsletterSubscriber)
+
+admin.site.register(ProductReview)
+class ProductReviewAdmin(admin.ModelAdmin):
+    list_display = (
+        'product',
+        'user',
+        'rating',
+        'short_text',
+        'created_at',
+        'updated_at',
+    )
+    list_filter = (
+        'rating',
+        'created_at',
+        'updated_at',
+        'product',
+    )
+    search_fields = (
+        'product__name',
+        'user__email',
+        'user__first_name',
+        'user__last_name',
+        'text',
+    )
+    autocomplete_fields = ('product', 'user')
+    readonly_fields = ('created_at', 'updated_at')
+    fields = (
+        'product',
+        'user',
+        'rating',
+        'text',
+        'created_at',
+        'updated_at',
+    )
+
+    def short_text(self, obj):
+        return obj.text[:50] + '...' if len(obj.text) > 50 else obj.text
+
+    short_text.short_description = 'Відгук'

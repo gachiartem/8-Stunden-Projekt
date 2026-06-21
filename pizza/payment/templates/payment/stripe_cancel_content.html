@@ -1,0 +1,53 @@
+<main class="checkout-page page-container">
+    <section class="checkout-card payment-result-card">
+        <div class="checkout-card-head">
+            <span>!</span>
+            <h2>Оплату скасовано</h2>
+        </div>
+
+        <p class="checkout-payment-text">
+            Ви скасували оплату. Замовлення не було оплачено.
+            Можете повернутися до оформлення та спробувати ще раз.
+        </p>
+
+        {% if order %}
+            <div class="payment-order-info">
+                <div>
+                    <span>Номер замовлення</span>
+                    <strong>№{{ order.id }}</strong>
+                </div>
+
+                <div>
+                    <span>Статус</span>
+                    <strong>{{ order.get_status_display }}</strong>
+                </div>
+
+                <div>
+                    <span>Сума</span>
+                    <strong>{{ order.total_price }} ₴</strong>
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="payment-result-actions">
+            <a href="{% url 'orders:checkout' %}"
+               hx-get="{% url 'orders:checkout' %}"
+               hx-target="#main-content"
+               hx-swap="innerHTML show:window:top"
+               hx-push-url="true"
+               class="checkout-pay-btn">
+                Спробувати ще раз
+            </a>
+
+            <a href="{% url 'main:index' %}"
+               hx-get="{% url 'main:index' %}"
+               hx-target="#main-content"
+               hx-select="#main-content"
+               hx-swap="innerHTML show:window:top"
+               hx-push-url="true"
+               class="payment-back-link">
+                Повернутися до меню
+            </a>
+        </div>
+    </section>
+</main>

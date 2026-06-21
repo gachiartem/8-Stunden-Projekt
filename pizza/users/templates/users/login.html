@@ -1,0 +1,75 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<main class="auth-page page-container">
+    <div class="auth-card">
+        <span class="auth-kicker">La.pizza account</span>
+
+        <h1 class="auth-title">Вхід</h1>
+
+        <p class="auth-subtitle">
+            Увійдіть в акаунт, щоб переглядати профіль та швидше оформлювати замовлення.
+        </p>
+
+        {% if messages %}
+            <div class="auth-messages">
+                {% for message in messages %}
+                    <div class="auth-error">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form id="loginForm"
+              method="post"
+              class="auth-form">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="auth-error">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <div class="auth-field">
+                <label>Email</label>
+                {{ form.username }}
+
+                {% if form.username.errors %}
+                    <div class="auth-error">
+                        {{ form.username.errors }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="auth-field">
+                <label>Пароль</label>
+                {{ form.password }}
+
+                {% if form.password.errors %}
+                    <div class="auth-error">
+                        {{ form.password.errors }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="auth-actions">
+                <button type="submit" class="auth-btn">
+                    Увійти
+                </button>
+
+                <a href="{% url 'users:register' %}"
+                   hx-get="{% url 'users:register' %}"
+                   hx-target="#main-content"
+                   hx-select="#main-content"
+                   hx-swap="innerHTML show:window:top"
+                   hx-push-url="true"
+                   class="auth-btn auth-btn-secondary">
+                    Реєстрація
+                </a>
+            </div>
+        </form>
+    </div>
+</main>
+{% endblock %}

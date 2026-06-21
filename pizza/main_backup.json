@@ -1,0 +1,1090 @@
+[
+{
+  "model": "main.category",
+  "pk": 1,
+  "fields": {
+    "name": "Напої",
+    "slug": "drinks"
+  }
+},
+{
+  "model": "main.category",
+  "pk": 2,
+  "fields": {
+    "name": "Піци",
+    "slug": "pizza"
+  }
+},
+{
+  "model": "main.category",
+  "pk": 3,
+  "fields": {
+    "name": "Комбо",
+    "slug": "combo"
+  }
+},
+{
+  "model": "main.category",
+  "pk": 4,
+  "fields": {
+    "name": "Снеки",
+    "slug": "sneki"
+  }
+},
+{
+  "model": "main.category",
+  "pk": 5,
+  "fields": {
+    "name": "Десерти",
+    "slug": "deserti"
+  }
+},
+{
+  "model": "main.size",
+  "pk": 1,
+  "fields": {
+    "name": "M"
+  }
+},
+{
+  "model": "main.size",
+  "pk": 2,
+  "fields": {
+    "name": "S"
+  }
+},
+{
+  "model": "main.size",
+  "pk": 3,
+  "fields": {
+    "name": "0.5л"
+  }
+},
+{
+  "model": "main.size",
+  "pk": 4,
+  "fields": {
+    "name": "Original"
+  }
+},
+{
+  "model": "main.size",
+  "pk": 5,
+  "fields": {
+    "name": "Zero"
+  }
+},
+{
+  "model": "main.size",
+  "pk": 6,
+  "fields": {
+    "name": "1л"
+  }
+},
+{
+  "model": "main.size",
+  "pk": 7,
+  "fields": {
+    "name": "0.75л"
+  }
+},
+{
+  "model": "main.size",
+  "pk": 8,
+  "fields": {
+    "name": "80г"
+  }
+},
+{
+  "model": "main.product",
+  "pk": 2,
+  "fields": {
+    "name": "Піца Гавайська",
+    "slug": "pica-gavajska",
+    "category": 2,
+    "price": "350.00",
+    "ingredients": "тісто для піци (містить ПШЕНИЦЮ), СИР твердий (містить МОЛОКО), соус томатний для піци, філе куряче варене, томати свіжі, ананас консервований, борошно ПШЕНИЧНЕ",
+    "description": "Незвичне, але улюблене поєднання ніжної шинки та соковитого ананаса на розплавленому сирі. Солодко-солоний смак створює яскраву тропічну гармонію, яка підкорює з першого шматочка",
+    "main_image": "products/main/pizza-gavai_S5ehcoE.webp",
+    "created_at": "2026-06-09",
+    "updated_at": "2026-06-15"
+  }
+},
+{
+  "model": "main.product",
+  "pk": 5,
+  "fields": {
+    "name": "Піца Овочева",
+    "slug": "pica-ovocheva",
+    "category": 2,
+    "price": "290.00",
+    "ingredients": "тісто (містить ПШЕНИЦЮ), кабачки свіжі, СИР Моцарела (містить МОЛОКО), соус томатний, перець болгарський свіжий, томати чері свіжі, оливкова олія класу Екстра Вірджин першого холодного віджиму, оливки чорні без кісточок, борошно ПШЕНИЧНЕ, сіль, прянощі",
+    "description": "Яскрава овочева піца з соковитими помідорами, перцем, маслинами та броколі. Легка, свіжа й ароматна — ідеальний вибір для поціновувачів ніжного смаку",
+    "main_image": "products/main/8464b5b4-7071-4cb8-878f-2a6af7c83806.webp",
+    "created_at": "2026-06-14",
+    "updated_at": "2026-06-15"
+  }
+},
+{
+  "model": "main.product",
+  "pk": 6,
+  "fields": {
+    "name": "Піца Карбонара",
+    "slug": "pica-karbonara",
+    "category": 2,
+    "price": "320.00",
+    "ingredients": "основа для піци (ГЛЮТЕН), соус Часниковий (ЯЙЦЯ, ГІРЧИЦЯ), СИР твердий (МОЛОКО), томати свіжі, грудинка варено-копчена (МОЛОКО), гриби шампіньйони відварені стерилізовані, ковбаски мисливські, балик свинячий, СИР Грана Падано (МОЛОКО), олія соняшникова рафінована дезодорована, борошно ПШЕНИЧНЕ в/с",
+    "description": "Насичена м’ясна піца з димними нотками ковбасок і грудинки, доповнена соковитими томатами та грибами. Ситна та ароматна класика для справжнього апетиту",
+    "main_image": "products/main/1fe5d76c-11dd-41b9-bfbe-7bcd63cff30a.webp",
+    "created_at": "2026-06-14",
+    "updated_at": "2026-06-14"
+  }
+},
+{
+  "model": "main.product",
+  "pk": 7,
+  "fields": {
+    "name": "Піца Франческо",
+    "slug": "pica-franchesko",
+    "category": 2,
+    "price": "310.00",
+    "ingredients": "тісто для піци (містить ПШЕНИЦЮ), СИР твердий (містить МОЛОКО), соус томатний для піци, томати, гриби печериці відварені стерилізовані, шинка свиняча, ковбаса салямі, борошно ПШЕНИЧНЕ",
+    "description": "Піца «Франческо» — гармонійне поєднання соковитої шинки, пікантної салямі, ароматних печериць та стиглих томатів на хрусткому тісті. Класичний смак, який завжди залишається улюбленим",
+    "main_image": "products/main/изображение_2026-06-14_231631353.png",
+    "created_at": "2026-06-14",
+    "updated_at": "2026-06-14"
+  }
+},
+{
+  "model": "main.product",
+  "pk": 8,
+  "fields": {
+    "name": "Піца Пепероні",
+    "slug": "pica-peperoni",
+    "category": 2,
+    "price": "290.00",
+    "ingredients": "борошно ПШЕНИЧНЕ в/с, ковбаса пепероні, СИР твердий, соус томатний, вода, томати, олія соняшникова, цукор, сіль, дріжджі пресовані",
+    "description": "Класична піца з пікантною ковбасою пепероні та розплавленим сиром. Яскрава гострота й насичений смак, які неможливо забути",
+    "main_image": "products/main/изображение_2026-06-14_232107612.png",
+    "created_at": "2026-06-14",
+    "updated_at": "2026-06-14"
+  }
+},
+{
+  "model": "main.product",
+  "pk": 9,
+  "fields": {
+    "name": "Піца Чотири сири",
+    "slug": "pica-chotiri-siri",
+    "category": 2,
+    "price": "310.00",
+    "ingredients": "тісто для піци (містить ПШЕНИЦЮ), СИР твердий (містить МОЛОКО), СИР Моцарела, СМЕТАНА, СИР з блакитною пліснявою, СИР Грана Падано  (містить МОЛОКО, ЯЙЦЯ), борошно ПШЕНИЧНЕ, прянощі",
+    "description": "Піца «Чотири сири» — вишукане поєднання чотирьох видів сиру, що створюють ніжний, насичений та гармонійний смак. Ароматна, вершкова та неймовірно тягуча — справжня насолода для любителів сирної класики",
+    "main_image": "products/main/изображение_2026-06-14_232209261.png",
+    "created_at": "2026-06-14",
+    "updated_at": "2026-06-14"
+  }
+},
+{
+  "model": "main.product",
+  "pk": 10,
+  "fields": {
+    "name": "Піца Гостра",
+    "slug": "pica-gostra",
+    "category": 2,
+    "price": "290.00",
+    "ingredients": "тісто для піци (містить ПШЕНИЦЮ), СИР твердий (містить МОЛОКО), соус томатний для піци, томати, шинка свиняча, ковбаски Мисливські, перець зелений Пеперончіні в розсолі (містить СУЛЬФІТИ), борошно ПШЕНИЧНЕ",
+    "description": "Піца з характером — соковита шинка, ковбаски та гострий перець створюють вибуховий смак для тих, хто любить пікантні відчуття",
+    "main_image": "products/main/изображение_2026-06-14_232611797.png",
+    "created_at": "2026-06-14",
+    "updated_at": "2026-06-14"
+  }
+},
+{
+  "model": "main.product",
+  "pk": 11,
+  "fields": {
+    "name": "Піца \"Маргарита\"",
+    "slug": "pica-margarita",
+    "category": 2,
+    "price": "310.00",
+    "ingredients": "тісто для піци (містить ПШЕНИЦЮ), СИР Моцарела (містить МОЛОКО), соус томатний для піци, томати, томати чері, СИР Грана Падано (містить МОЛОКО, ЯЙЦЯ), борошно ПШЕНИЧНЕ, прянощі",
+    "description": "Піца «Маргарита» — класика італійської кухні з ніжною моцарелою, ароматним томатним соусом та соковитими томатами і чері, доповнена вишуканим сиром Грана Падано. Легка, свіжа та збалансована піца з яскравим середземноморським смаком",
+    "main_image": "products/main/изображение_2026-06-14_232918778.png",
+    "created_at": "2026-06-14",
+    "updated_at": "2026-06-14"
+  }
+},
+{
+  "model": "main.product",
+  "pk": 12,
+  "fields": {
+    "name": "Піца Seafood",
+    "slug": "pica-morska",
+    "category": 2,
+    "price": "370.00",
+    "ingredients": "тісто для піци (містить ПШЕНИЦЮ), СИР твердий, м'ясо МІДІЙ заморожене (МОЛЮСКИ), томати, КРЕВЕТКИ очищені варено-морожені (РАКОПОДІБНІ), соус Часниковий (містить ЯЙЦЯ, ГІРЧИЦЮ), соус томатний для піци, оливки чорні без кісточок, борошно ПШЕНИЧНЕ, сіль, прянощі",
+    "description": "Морська піца з ніжними креветками та мідіями, соковитими томатами й тягучим сиром під ароматним часниковим і томатним соусом. Насичений смак моря з пікантними середземноморськими нотками",
+    "main_image": "products/main/изображение_2026-06-14_234749834.png",
+    "created_at": "2026-06-14",
+    "updated_at": "2026-06-15"
+  }
+},
+{
+  "model": "main.product",
+  "pk": 13,
+  "fields": {
+    "name": "Coca-Cola",
+    "slug": "coca-cola",
+    "category": 1,
+    "price": "35.00",
+    "ingredients": "",
+    "description": "Освіжаюча Coca-Cola — класичний газований напій з яскравим смаком і приємною бадьорістю. Також доступна у версії Zero без цукру — легший варіант без втрати смаку",
+    "main_image": "products/main/изображение_2026-06-15_002317871.png",
+    "created_at": "2026-06-14",
+    "updated_at": "2026-06-15"
+  }
+},
+{
+  "model": "main.product",
+  "pk": 15,
+  "fields": {
+    "name": "«Садочок» яблуко-виноград",
+    "slug": "nektar-sadochok-yabluchno-vinogradnij",
+    "category": 1,
+    "price": "55.00",
+    "ingredients": "",
+    "description": "Нектар «Садочок» яблучно-виноградний — ніжний, натуральний смак стиглих яблук і солодкого винограду. Легкий та освіжаючий напій, який чудово смакує і дорослим, і дітям",
+    "main_image": "products/main/изображение_2026-06-15_002154814.png",
+    "created_at": "2026-06-15",
+    "updated_at": "2026-06-15"
+  }
+},
+{
+  "model": "main.product",
+  "pk": 16,
+  "fields": {
+    "name": "«Садочок» мультивітамін",
+    "slug": "sadochok-multivitamin",
+    "category": 1,
+    "price": "65.00",
+    "ingredients": "",
+    "description": "Мультивітамінний сік з м'якоттю від Садочка - це поєднання фруктів та ягід, добре знайомих з дитинства. Цей сік дарує свіжість соковитих фруктів",
+    "main_image": "products/main/изображение_2026-06-15_003232986.png",
+    "created_at": "2026-06-15",
+    "updated_at": "2026-06-15"
+  }
+},
+{
+  "model": "main.product",
+  "pk": 17,
+  "fields": {
+    "name": "«Моршинська» негазована",
+    "slug": "morshinska-negazovana",
+    "category": 1,
+    "price": "20.00",
+    "ingredients": "",
+    "description": "",
+    "main_image": "products/main/изображение_2026-06-15_004115875.png",
+    "created_at": "2026-06-15",
+    "updated_at": "2026-06-15"
+  }
+},
+{
+  "model": "main.product",
+  "pk": 18,
+  "fields": {
+    "name": "Fanta Orange",
+    "slug": "fanta-orange",
+    "category": 1,
+    "price": "32.00",
+    "ingredients": "",
+    "description": "Освіжаюча Fanta Orange з яскравим цитрусовим смаком апельсина та легкою газованістю. Також доступна у версії без цукру — для насолоди улюбленим смаком у більш легкому варіанті",
+    "main_image": "products/main/изображение_2026-06-15_005152812.png",
+    "created_at": "2026-06-15",
+    "updated_at": "2026-06-15"
+  }
+},
+{
+  "model": "main.product",
+  "pk": 19,
+  "fields": {
+    "name": "Кабаноси Original",
+    "slug": "kabanosi-original",
+    "category": 4,
+    "price": "80.00",
+    "ingredients": "",
+    "description": "Кабаноси оригінальні — тонкі копчені ковбаски з насиченим м’ясним смаком і приємним ароматом диму. Ідеальна закуска до напоїв або як швидкий перекус для справжніх поціновувачів м’яса",
+    "main_image": "products/main/изображение_2026-06-15_005817615.png",
+    "created_at": "2026-06-15",
+    "updated_at": "2026-06-15"
+  }
+},
+{
+  "model": "main.product",
+  "pk": 20,
+  "fields": {
+    "name": "Кабаноси Delicate курячі",
+    "slug": "kabanosi-delicate-kuryachi",
+    "category": 4,
+    "price": "80.00",
+    "ingredients": "",
+    "description": "Кабаноси Delicate курячі — ніжні копчені ковбаски з легким м’ясним смаком і приємним ароматом диму. Ідеальна легка закуска для швидкого перекусу або доповнення до напоїв",
+    "main_image": "products/main/изображение_2026-06-15_010643871.png",
+    "created_at": "2026-06-15",
+    "updated_at": "2026-06-15"
+  }
+},
+{
+  "model": "main.product",
+  "pk": 21,
+  "fields": {
+    "name": "Кабаноси Cheese курячі",
+    "slug": "kabanosi-cheese-kuryachi",
+    "category": 4,
+    "price": "80.00",
+    "ingredients": "",
+    "description": "Кабаноси Cheese курячі — ніжні копчені ковбаски з курячого м’яса з приємним вершково-сирним смаком. Ароматна та м’яка закуска, яка чудово підходить для перекусу або до напоїв",
+    "main_image": "products/main/изображение_2026-06-15_010829871.png",
+    "created_at": "2026-06-15",
+    "updated_at": "2026-06-15"
+  }
+},
+{
+  "model": "main.product",
+  "pk": 22,
+  "fields": {
+    "name": "Картопля фрі, 170г",
+    "slug": "kartoplya-fri",
+    "category": 4,
+    "price": "70.00",
+    "ingredients": "",
+    "description": "Картопля фрі — хрустка ззовні та ніжна всередині, золотиста й ароматна. Ідеальний гарнір або самостійна закуска, яка чудово смакує з соусами та доповнює будь-яку страву",
+    "main_image": "products/main/изображение_2026-06-15_011248332.png",
+    "created_at": "2026-06-15",
+    "updated_at": "2026-06-15"
+  }
+},
+{
+  "model": "main.product",
+  "pk": 23,
+  "fields": {
+    "name": "Горішок зі згущеним молоком, 20г",
+    "slug": "gorishok-zi-zgushenim-molokom",
+    "category": 5,
+    "price": "13.00",
+    "ingredients": "напівфабрикат пісочний (борошно ПШЕНИЧНЕ вищого сорту, МАСЛО, цукор, СМЕТАНА, сухий ЯЄЧНИЙ порошок, розпушувач, сіль), МОЛОКО згущене варене 50% (МОЛОКО коров'яче незбиране, цукор, ЛАКТОЗА)",
+    "description": "Ніжне розсипчасте печиво з ароматною карамельною начинкою. Солодка класика, яка дарує затишний домашній смак і чудово пасує до кави чи чаю",
+    "main_image": "products/main/изображение_2026-06-15_011745756.png",
+    "created_at": "2026-06-15",
+    "updated_at": "2026-06-15"
+  }
+},
+{
+  "model": "main.product",
+  "pk": 24,
+  "fields": {
+    "name": "Тістечко «Полуничне», 120г",
+    "slug": "tistechko-polunichne",
+    "category": 5,
+    "price": "45.00",
+    "ingredients": "вода, полуниця свіжа, цукор, ЯЙЦЯ курячі, суміш на основі рослинних жирів і олій (містить МОЛОКО), крем сухий заварний (містить МОЛОКО), суміш суха для приготування нейтрального гелю, борошно ПШЕНИЧНЕ вищого сорту",
+    "description": "Ніжний десерт із легким бісквітом і вершковим кремом із полуничними нотками. Свіжий, ароматний смак, який дарує справжню насолоду з кожним шматочком",
+    "main_image": "products/main/изображение_2026-06-15_011917263.png",
+    "created_at": "2026-06-15",
+    "updated_at": "2026-06-15"
+  }
+},
+{
+  "model": "main.product",
+  "pk": 25,
+  "fields": {
+    "name": "Тістечко Чизкейк карамельний, 100г",
+    "slug": "tistechko-chizkejk-karamelnij",
+    "category": 5,
+    "price": "70.00",
+    "ingredients": "крем-сир (містить МОЛОКО), цукор, ЯЙЦЯ курячі, МАСЛО, карамель (цукор, ВЕРШКИ, МАСЛО, сіль), борошно ПШЕНИЧНЕ вищого сорту, спред СОЛОДКОВЕРШКОВИЙ, крем сухий заварний, сік зі свіжих лимонів, СМЕТАНА, цедра зі свіжих лимонів",
+    "description": "Десерт із кремовою текстурою та глибоким карамельним смаком, який тане в роті. Легка солодкість і приємна вершкова основа роблять його ідеальним завершенням будь-якої трапези",
+    "main_image": "products/main/изображение_2026-06-15_012402504.png",
+    "created_at": "2026-06-15",
+    "updated_at": "2026-06-15"
+  }
+},
+{
+  "model": "main.product",
+  "pk": 26,
+  "fields": {
+    "name": "Тістечко «Ківі Фреш», 120г",
+    "slug": "tistechko-kivi-fresh-120g",
+    "category": 5,
+    "price": "45.00",
+    "ingredients": "ківі свіже, ЯЙЦЯ курячі, цукор, суміш на основі рослинних жирів і олій (містить МОЛОКО), вода, борошно ПШЕНИЧНЕ вищого сорту, МОЛОКО незбиране згущене з цукром",
+    "description": "Тістечко «Ківі Фреш» — легкий десерт із ніжним кремом та яскравою кисло-солодкою ноткою ківі. Свіжий, освіжаючий смак, який додає легкості та гарного настрою з кожним шматочком",
+    "main_image": "products/main/изображение_2026-06-15_012753016.png",
+    "created_at": "2026-06-15",
+    "updated_at": "2026-06-15"
+  }
+},
+{
+  "model": "main.product",
+  "pk": 27,
+  "fields": {
+    "name": "Курячі нагетси в паніровці",
+    "slug": "kuryachi-nagetsi-v-panirovci",
+    "category": 4,
+    "price": "80.00",
+    "ingredients": "філе курчати-бройлера, борошно ПШЕНИЧНЕ, крохмаль: ПШЕНИЧНИЙ, ПШЕНИЧНИЙ модифікований; соняшникова олія, сіль, ПШЕНИЧНА клейковина, спеції: паприка, куркума; розпушувач Е503, дріжджі хлібопекарські), вода, крохмаль картопляний, сіль",
+    "description": "Соковиті курячі нагетси в золотистій хрусткій паніровці. Ніжні всередині та апетитно хрусткі зовні — смачна й зручна закуска для будь-якого настрою",
+    "main_image": "products/main/изображение_2026-06-15_013602184.png",
+    "created_at": "2026-06-15",
+    "updated_at": "2026-06-15"
+  }
+},
+{
+  "model": "main.product",
+  "pk": 28,
+  "fields": {
+    "name": "Тістечко \"Напоеон\", 120г",
+    "slug": "tistechko-napoeon-120g",
+    "category": 5,
+    "price": "45.00",
+    "ingredients": "МОЛОКО, МОЛОКО незбиране згущене з цукром, МАСЛО, борошно ПШЕНИЧНЕ вищого сорту, цукор, ЯЙЦЯ курячі, маргарин (містить СОЮ), СМЕТАНА",
+    "description": "Листкові коржі з повітряним заварним кремом, що створюють ідеальний баланс хрусткої текстури та вершкової ніжності. Класичний десерт із багатим, знайомим з дитинства смаком",
+    "main_image": "products/main/изображение_2026-06-15_013955231.png",
+    "created_at": "2026-06-15",
+    "updated_at": "2026-06-15"
+  }
+},
+{
+  "model": "main.product",
+  "pk": 29,
+  "fields": {
+    "name": "Живчик",
+    "slug": "zhivchik",
+    "category": 1,
+    "price": "20.00",
+    "ingredients": "",
+    "description": "Натуральний газований напій з приємним яблучним смаком та легкою трав’яною ноткою. Освіжає, додає бадьорості та чудово втамовує спрагу в будь-який момент дня",
+    "main_image": "products/main/изображение_2026-06-15_014817313.png",
+    "created_at": "2026-06-15",
+    "updated_at": "2026-06-15"
+  }
+},
+{
+  "model": "main.product",
+  "pk": 30,
+  "fields": {
+    "name": "Чотири сири + Coca-Cola Original",
+    "slug": "chotiri-siri-coca-cola-original-500ml",
+    "category": 3,
+    "price": "360.00",
+    "ingredients": "Піца «Чотири сири» розмір М - 1шт; Напій Coca-Cola Original 500мл - 2шт.",
+    "description": "Комбо-набір це ідеальне поєднання для справжніх поціновувачів насиченого смаку та освіжаючого напою. Ніжна, вершкова піца з багатим сирним ароматом чудово розкривається в тандемі з класичною Coca-Cola",
+    "main_image": "products/main/изображение_2026-06-15_020018024.png",
+    "created_at": "2026-06-15",
+    "updated_at": "2026-06-15"
+  }
+},
+{
+  "model": "main.product",
+  "pk": 31,
+  "fields": {
+    "name": "Сік Ніжин із жовтих томатів",
+    "slug": "sik-nizhin-iz-zhovtih-tomativ",
+    "category": 1,
+    "price": "180.00",
+    "ingredients": "",
+    "description": "Сік «Ніжин» із жовтих томатів з сіллю — натуральний, густий томатний напій із ніжним солодкуватим смаком жовтих помідорів та легкою солоною ноткою. Ідеально освіжає та чудово смакує як самостійний напій або доповнення до страв",
+    "main_image": "products/main/изображение_2026-06-15_020740643.png",
+    "created_at": "2026-06-15",
+    "updated_at": "2026-06-15"
+  }
+},
+{
+  "model": "main.product",
+  "pk": 32,
+  "fields": {
+    "name": "Карбонара + Coca-Cola Original",
+    "slug": "karbonara-coca-cola-original",
+    "category": 3,
+    "price": "370.00",
+    "ingredients": "Піца «Карбонара» розмір М - 1шт; Напій Coca-Cola Original 500мл - 2шт",
+    "description": "Ситна піца з насиченим м’ясним смаком у поєднанні з класичною Coca-Cola. Ідеальний баланс солоного, ароматного смаку та освіжаючої солодкої бульбашкової свіжості для повноцінного задоволення",
+    "main_image": "products/main/изображение_2026-06-15_021739219.png",
+    "created_at": "2026-06-15",
+    "updated_at": "2026-06-15"
+  }
+},
+{
+  "model": "main.product",
+  "pk": 33,
+  "fields": {
+    "name": "Чотири м’яса + Coca-Cola Original",
+    "slug": "chotiri-myasa-coca-cola-original",
+    "category": 3,
+    "price": "370.00",
+    "ingredients": "Піца «Чотири м’яса» розміру М - 1шт; Напій Coca-Cola Original 500мл - 2шт",
+    "description": "Потужне поєднання для справжніх гурманів. Насичена м’ясна піца з яскравим ароматом і соковитим смаком у тандемі з класичною Coca-Cola створює ідеальний баланс ситності та свіжості",
+    "main_image": "products/main/изображение_2026-06-15_022739850.png",
+    "created_at": "2026-06-15",
+    "updated_at": "2026-06-15"
+  }
+},
+{
+  "model": "main.product",
+  "pk": 34,
+  "fields": {
+    "name": "Піца Чотири м'яса",
+    "slug": "pica-chotiri-myasa",
+    "category": 2,
+    "price": "340.00",
+    "ingredients": "тісто для піци (ГЛЮТЕН), соус томатний, СИР м'який Моцарелла (МОЛОКО), СИР м'який Моцарелла копчена (МОЛОКО), м'ясо яловиче, філе куряче, ковбаски мисливські, бекон , СИР твердий Парміджіано Реджіано (МОЛОКО), олія оливкова, зелень базиліку свіжа",
+    "description": "Справжня знахідка для поціновувачів насиченого смаку. Поєднання різних видів м’яса створює соковиту, ароматну та по-справжньому ситну піцу, яка чудово втамовує голод і дарує максимальне задоволення",
+    "main_image": "products/main/изображение_2026-06-15_023222475.png",
+    "created_at": "2026-06-15",
+    "updated_at": "2026-06-15"
+  }
+},
+{
+  "model": "main.product",
+  "pk": 35,
+  "fields": {
+    "name": "Курячі крильця",
+    "slug": "kuryachi-krilcya",
+    "category": 4,
+    "price": "65.00",
+    "ingredients": "крила курячі 97%, маринад 3% (яблучне пюре, вода, сіль, олія соняшникова рафінована дезодорована, глюкозно-фруктозний сироп, прянощі)",
+    "description": "Соковиті, ароматні та апетитно запечені до золотистої скоринки. Насичений смак маринаду проникає в кожен шматочок, роблячи їх ідеальною ситною закускою для будь-якого настрою",
+    "main_image": "products/main/изображение_2026-06-15_024004446.png",
+    "created_at": "2026-06-15",
+    "updated_at": "2026-06-15"
+  }
+},
+{
+  "model": "main.productsize",
+  "pk": 2,
+  "fields": {
+    "product": 2,
+    "size": 2,
+    "price": "300.00",
+    "stock": 10
+  }
+},
+{
+  "model": "main.productsize",
+  "pk": 3,
+  "fields": {
+    "product": 2,
+    "size": 1,
+    "price": "350.00",
+    "stock": 10
+  }
+},
+{
+  "model": "main.productsize",
+  "pk": 7,
+  "fields": {
+    "product": 5,
+    "size": 2,
+    "price": "250.00",
+    "stock": 9
+  }
+},
+{
+  "model": "main.productsize",
+  "pk": 8,
+  "fields": {
+    "product": 6,
+    "size": 2,
+    "price": "270.00",
+    "stock": 12
+  }
+},
+{
+  "model": "main.productsize",
+  "pk": 9,
+  "fields": {
+    "product": 7,
+    "size": 2,
+    "price": "280.00",
+    "stock": 11
+  }
+},
+{
+  "model": "main.productsize",
+  "pk": 10,
+  "fields": {
+    "product": 7,
+    "size": 1,
+    "price": "310.00",
+    "stock": 10
+  }
+},
+{
+  "model": "main.productsize",
+  "pk": 11,
+  "fields": {
+    "product": 8,
+    "size": 2,
+    "price": "230.00",
+    "stock": 20
+  }
+},
+{
+  "model": "main.productsize",
+  "pk": 12,
+  "fields": {
+    "product": 8,
+    "size": 1,
+    "price": "290.00",
+    "stock": 12
+  }
+},
+{
+  "model": "main.productsize",
+  "pk": 13,
+  "fields": {
+    "product": 9,
+    "size": 2,
+    "price": "260.00",
+    "stock": 17
+  }
+},
+{
+  "model": "main.productsize",
+  "pk": 14,
+  "fields": {
+    "product": 9,
+    "size": 1,
+    "price": "310.00",
+    "stock": 9
+  }
+},
+{
+  "model": "main.productsize",
+  "pk": 15,
+  "fields": {
+    "product": 10,
+    "size": 2,
+    "price": "250.00",
+    "stock": 18
+  }
+},
+{
+  "model": "main.productsize",
+  "pk": 16,
+  "fields": {
+    "product": 10,
+    "size": 1,
+    "price": "290.00",
+    "stock": 10
+  }
+},
+{
+  "model": "main.productsize",
+  "pk": 17,
+  "fields": {
+    "product": 5,
+    "size": 1,
+    "price": "290.00",
+    "stock": 19
+  }
+},
+{
+  "model": "main.productsize",
+  "pk": 18,
+  "fields": {
+    "product": 11,
+    "size": 2,
+    "price": "270.00",
+    "stock": 19
+  }
+},
+{
+  "model": "main.productsize",
+  "pk": 19,
+  "fields": {
+    "product": 11,
+    "size": 1,
+    "price": "310.00",
+    "stock": 10
+  }
+},
+{
+  "model": "main.productsize",
+  "pk": 20,
+  "fields": {
+    "product": 6,
+    "size": 1,
+    "price": "320.00",
+    "stock": 10
+  }
+},
+{
+  "model": "main.productsize",
+  "pk": 21,
+  "fields": {
+    "product": 12,
+    "size": 2,
+    "price": "339.99",
+    "stock": 20
+  }
+},
+{
+  "model": "main.productsize",
+  "pk": 22,
+  "fields": {
+    "product": 12,
+    "size": 1,
+    "price": "370.00",
+    "stock": 20
+  }
+},
+{
+  "model": "main.productsize",
+  "pk": 23,
+  "fields": {
+    "product": 13,
+    "size": 4,
+    "price": "35.00",
+    "stock": 5
+  }
+},
+{
+  "model": "main.productsize",
+  "pk": 25,
+  "fields": {
+    "product": 13,
+    "size": 5,
+    "price": "35.00",
+    "stock": 5
+  }
+},
+{
+  "model": "main.productsize",
+  "pk": 26,
+  "fields": {
+    "product": 15,
+    "size": 6,
+    "price": "55.00",
+    "stock": 10
+  }
+},
+{
+  "model": "main.productsize",
+  "pk": 27,
+  "fields": {
+    "product": 16,
+    "size": 6,
+    "price": "65.00",
+    "stock": 10
+  }
+},
+{
+  "model": "main.productsize",
+  "pk": 28,
+  "fields": {
+    "product": 17,
+    "size": 3,
+    "price": "20.00",
+    "stock": 10
+  }
+},
+{
+  "model": "main.productsize",
+  "pk": 29,
+  "fields": {
+    "product": 18,
+    "size": 4,
+    "price": "32.00",
+    "stock": 10
+  }
+},
+{
+  "model": "main.productsize",
+  "pk": 30,
+  "fields": {
+    "product": 18,
+    "size": 5,
+    "price": "32.00",
+    "stock": 12
+  }
+},
+{
+  "model": "main.productsize",
+  "pk": 31,
+  "fields": {
+    "product": 17,
+    "size": 7,
+    "price": "25.00",
+    "stock": 12
+  }
+},
+{
+  "model": "main.productsize",
+  "pk": 32,
+  "fields": {
+    "product": 19,
+    "size": 8,
+    "price": "80.00",
+    "stock": 10
+  }
+},
+{
+  "model": "main.productsize",
+  "pk": 33,
+  "fields": {
+    "product": 20,
+    "size": 8,
+    "price": "80.00",
+    "stock": 12
+  }
+},
+{
+  "model": "main.productsize",
+  "pk": 34,
+  "fields": {
+    "product": 21,
+    "size": 8,
+    "price": "80.00",
+    "stock": 12
+  }
+},
+{
+  "model": "main.productsize",
+  "pk": 35,
+  "fields": {
+    "product": 22,
+    "size": 2,
+    "price": "70.00",
+    "stock": 11
+  }
+},
+{
+  "model": "main.productsize",
+  "pk": 36,
+  "fields": {
+    "product": 23,
+    "size": 2,
+    "price": "13.00",
+    "stock": 14
+  }
+},
+{
+  "model": "main.productsize",
+  "pk": 37,
+  "fields": {
+    "product": 24,
+    "size": 2,
+    "price": "45.00",
+    "stock": 13
+  }
+},
+{
+  "model": "main.productsize",
+  "pk": 38,
+  "fields": {
+    "product": 25,
+    "size": 2,
+    "price": "70.00",
+    "stock": 14
+  }
+},
+{
+  "model": "main.productsize",
+  "pk": 39,
+  "fields": {
+    "product": 26,
+    "size": 2,
+    "price": "45.00",
+    "stock": 15
+  }
+},
+{
+  "model": "main.productsize",
+  "pk": 40,
+  "fields": {
+    "product": 27,
+    "size": 2,
+    "price": "80.00",
+    "stock": 11
+  }
+},
+{
+  "model": "main.productsize",
+  "pk": 41,
+  "fields": {
+    "product": 27,
+    "size": 1,
+    "price": "150.00",
+    "stock": 9
+  }
+},
+{
+  "model": "main.productsize",
+  "pk": 42,
+  "fields": {
+    "product": 28,
+    "size": 2,
+    "price": "45.02",
+    "stock": 4
+  }
+},
+{
+  "model": "main.productsize",
+  "pk": 43,
+  "fields": {
+    "product": 29,
+    "size": 3,
+    "price": "20.00",
+    "stock": 5
+  }
+},
+{
+  "model": "main.productsize",
+  "pk": 44,
+  "fields": {
+    "product": 29,
+    "size": 6,
+    "price": "41.00",
+    "stock": 6
+  }
+},
+{
+  "model": "main.productsize",
+  "pk": 45,
+  "fields": {
+    "product": 30,
+    "size": 2,
+    "price": "360.00",
+    "stock": 3
+  }
+},
+{
+  "model": "main.productsize",
+  "pk": 46,
+  "fields": {
+    "product": 31,
+    "size": 6,
+    "price": "180.00",
+    "stock": 5
+  }
+},
+{
+  "model": "main.productsize",
+  "pk": 47,
+  "fields": {
+    "product": 32,
+    "size": 1,
+    "price": "370.00",
+    "stock": 5
+  }
+},
+{
+  "model": "main.productsize",
+  "pk": 48,
+  "fields": {
+    "product": 33,
+    "size": 2,
+    "price": "370.00",
+    "stock": 3
+  }
+},
+{
+  "model": "main.productsize",
+  "pk": 49,
+  "fields": {
+    "product": 34,
+    "size": 2,
+    "price": "300.00",
+    "stock": 0
+  }
+},
+{
+  "model": "main.productsize",
+  "pk": 50,
+  "fields": {
+    "product": 34,
+    "size": 1,
+    "price": "340.00",
+    "stock": 0
+  }
+},
+{
+  "model": "main.productsize",
+  "pk": 51,
+  "fields": {
+    "product": 35,
+    "size": 2,
+    "price": "70.00",
+    "stock": 3
+  }
+},
+{
+  "model": "main.productsize",
+  "pk": 52,
+  "fields": {
+    "product": 35,
+    "size": 1,
+    "price": "140.00",
+    "stock": 4
+  }
+},
+{
+  "model": "main.productimage",
+  "pk": 6,
+  "fields": {
+    "product": 6,
+    "image": "product/extra/pizza-1154-cr-700x500.jpg"
+  }
+},
+{
+  "model": "main.productimage",
+  "pk": 7,
+  "fields": {
+    "product": 7,
+    "image": "product/extra/изображение_2026-06-14_231622989.png"
+  }
+},
+{
+  "model": "main.productimage",
+  "pk": 8,
+  "fields": {
+    "product": 9,
+    "image": "product/extra/изображение_2026-06-14_232435246.png"
+  }
+},
+{
+  "model": "main.productimage",
+  "pk": 9,
+  "fields": {
+    "product": 13,
+    "image": "product/extra/изображение_2026-06-15_002425994-Photoroom.png"
+  }
+},
+{
+  "model": "main.productimage",
+  "pk": 10,
+  "fields": {
+    "product": 18,
+    "image": "product/extra/изображение_2026-06-15_005204210.png"
+  }
+},
+{
+  "model": "main.productimage",
+  "pk": 11,
+  "fields": {
+    "product": 17,
+    "image": "product/extra/изображение_2026-06-15_005555772.png"
+  }
+},
+{
+  "model": "main.newslettersubscriber",
+  "pk": 1,
+  "fields": {
+    "email": "gachiartem@gmail.com",
+    "created_at": "2026-06-10T14:43:30.059Z",
+    "is_active": true
+  }
+}
+]

@@ -1,12 +1,18 @@
-from django.shortcuts import get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.urls import reverse
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import TemplateView, DetailView, ListView
 from django.http import HttpResponse
 from django.template.response import TemplateResponse
 from django.views.decorators.http import require_POST
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
-from .models import Category, Product, Size, ProductSize, NewsletterSubscriber
+from .models import Category, Product, Size, ProductSize, ProductReview, NewsletterSubscriber
 from django.db.models import Q, Count  
+from django.contrib import messages
+
+
+
 
 
 class IndexView(TemplateView):
@@ -17,6 +23,20 @@ class IndexView(TemplateView):
 
         categories = Category.objects.annotate(total_products=Count('products'))
         default_category = get_default_recommended_category()
+
+        seafood_pizza = Product.objects.filter(
+            slug='seafood-pizza'
+        ).prefetch_related(
+            'product_sizes',
+            'product_sizes__size'
+        ).first()
+
+        seafood_pizza_size = None
+
+        if seafood_pizza:
+            seafood_pizza_size = seafood_pizza.product_sizes.filter(
+                stock__gt=0
+            ).order_by('price').first()
 
         if default_category:
             recommended_products = Product.objects.filter(
@@ -35,6 +55,9 @@ class IndexView(TemplateView):
             'recommended_products': recommended_products,
             'recommended_category_slug': recommended_category_slug,
             'recommended_category_name': recommended_category_name,
+
+            'seafood_pizza': seafood_pizza,
+            'seafood_pizza_size': seafood_pizza_size,
         })
 
         return context
@@ -179,7 +202,7 @@ class ProductDetailView(DetailView):
         if request.headers.get('HX-Request'):
             return TemplateResponse(request, 'main/product_detail.html', context)
         return TemplateResponse(request, 'main/product_detail.html', context)
-
+       
 
 class PizzaListView(ListView):
     model = Product
@@ -222,3 +245,100 @@ def subscribe_newsletter(request):
     return HttpResponse(
         '<p class="subscribe-message subscribe-success">Дякуємо! Ви підписалися на оновлення.</p>'
     )
+
+@login_required(login_url='users:login')
+def add_product_review(request, slug):
+    product = get_object_or_404(Product, slug=slug)
+
+    if request.method != 'POST':
+        return redirect(reverse('main:product_detail', kwargs={'slug': product.slug}) + '#reviews-section')
+
+    rating = request.POST.get('rating')
+    text = request.POST.get('text', '').strip()
+
+    try:
+        rating = int(rating)
+    except (TypeError, ValueError):
+        messages.error(request, 'Оберіть оцінку від 1 до 5.')
+        return redirect(reverse('main:product_detail', kwargs={'slug': product.slug}) + '#reviews-section')
+
+    if rating < 1 or rating > 5:
+        messages.error(request, 'Оцінка має бути від 1 до 5.')
+        return redirect(reverse('main:product_detail', kwargs={'slug': product.slug}) + '#reviews-section')
+
+    if not text:
+        messages.error(request, 'Напишіть короткий відгук.')
+        return redirect(reverse('main:product_detail', kwargs={'slug': product.slug}) + '#reviews-section')
+
+    ProductReview.objects.update_or_create(
+        product=product,
+        user=request.user,
+        defaults={
+            'rating': rating,
+            'text': text,
+        }
+    )
+
+    messages.success(request, 'Ваш відгук збережено.')
+
+    return redirect(reverse('main:product_detail', kwargs={'slug': product.slug}) + '#reviews-section')
+
+def get_product_review_context(request, product):
+    existing_review = None
+
+    if request.user.is_authenticated:
+        existing_review = ProductReview.objects.filter(
+            product=product,
+            user=request.user
+        ).first()
+
+    return {
+        'existing_review': existing_review,
+    }
+
+from main.models import Product
+
+
+def index(request):
+    seafood_pizza = Product.objects.filter(
+        slug='seafood-pizza'
+    ).prefetch_related(
+        'product_sizes',
+        'product_sizes__size'
+    ).first()
+
+    seafood_pizza_size = None
+
+    if seafood_pizza:
+        seafood_pizza_size = seafood_pizza.product_sizes.filter(
+            stock__gt=0
+        ).order_by('price').first()
+
+    context = {
+        'seafood_pizza': seafood_pizza,
+        'seafood_pizza_size': seafood_pizza_size,
+    }
+
+    return render(request, 'main/index.html', context)
+
+def index(request):
+    seafood_pizza = Product.objects.filter(
+        slug='seafood-pizza'
+    ).prefetch_related(
+        'product_sizes',
+        'product_sizes__size'
+    ).first()
+
+    seafood_pizza_size = None
+
+    if seafood_pizza:
+        seafood_pizza_size = seafood_pizza.product_sizes.filter(
+            stock__gt=0
+        ).order_by('price').first()
+
+    context = {
+        'seafood_pizza': seafood_pizza,
+        'seafood_pizza_size': seafood_pizza_size,
+    }
+
+    return render(request, 'main/index.html', context)

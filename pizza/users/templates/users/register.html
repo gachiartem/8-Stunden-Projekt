@@ -1,0 +1,156 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<main class="auth-page page-container">
+    <div class="auth-card">
+        <span class="auth-kicker">La.pizza account</span>
+
+        <h1 class="auth-title">Реєстрація</h1>
+
+        <p class="auth-subtitle">
+            Створіть акаунт, щоб швидше оформлювати замовлення та зберігати контактні дані.
+        </p>
+
+        {% if messages %}
+            <div class="auth-messages">
+                {% for message in messages %}
+                    <div class="auth-error">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form id="createAccountForm"
+              method="post"
+              class="auth-form">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="auth-error">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <div class="auth-grid-2">
+                <div class="auth-field">
+                    <label>Імʼя</label>
+                    {{ form.first_name }}
+
+                    {% if form.first_name.errors %}
+                        <div class="auth-error">
+                            {{ form.first_name.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="auth-field">
+                    <label>Прізвище</label>
+                    {{ form.last_name }}
+
+                    {% if form.last_name.errors %}
+                        <div class="auth-error">
+                            {{ form.last_name.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="auth-field">
+                <label>Email</label>
+                {{ form.email }}
+
+                {% if form.email.errors %}
+                    <div class="auth-error">
+                        {{ form.email.errors }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="auth-field">
+                <label>Пароль</label>
+                {{ form.password1 }}
+
+                {% if form.password1.errors %}
+                    <div class="auth-error">
+                        {{ form.password1.errors }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="auth-field">
+                <label>Повторіть пароль</label>
+                {{ form.password2 }}
+
+                {% if form.password2.errors %}
+                    <div class="auth-error">
+                        {{ form.password2.errors }}
+                    </div>
+                {% endif %}
+
+                <div id="passwordError" class="auth-error auth-error-hidden">
+                    Паролі не співпадають.
+                </div>
+            </div>
+
+            <div class="auth-actions">
+                <button type="submit" class="auth-btn">
+                    Зареєструватися
+                </button>
+
+                <a href="{% url 'users:login' %}"
+                   hx-get="{% url 'users:login' %}"
+                   hx-target="#main-content"
+                   hx-select="#main-content"
+                   hx-swap="innerHTML show:window:top"
+                   hx-push-url="true"
+                   class="auth-btn auth-btn-secondary">
+                    Увійти
+                </a>
+            </div>
+        </form>
+    </div>
+</main>
+
+<script>
+    (function () {
+        const form = document.getElementById('createAccountForm');
+        const passwordInput = document.getElementById('id_password1');
+        const confirmPasswordInput = document.getElementById('id_password2');
+        const passwordError = document.getElementById('passwordError');
+
+        if (!form || !passwordInput || !confirmPasswordInput || !passwordError) {
+            return;
+        }
+
+        function validatePasswords() {
+            const password = passwordInput.value;
+            const confirmPassword = confirmPasswordInput.value;
+
+            if (confirmPassword && password !== confirmPassword) {
+                passwordError.classList.remove('auth-error-hidden');
+                confirmPasswordInput.classList.add('auth-input-error');
+                return false;
+            }
+
+            passwordError.classList.add('auth-error-hidden');
+            confirmPasswordInput.classList.remove('auth-input-error');
+            return true;
+        }
+
+        confirmPasswordInput.addEventListener('input', validatePasswords);
+
+        passwordInput.addEventListener('input', function () {
+            if (confirmPasswordInput.value) {
+                validatePasswords();
+            }
+        });
+
+        form.addEventListener('submit', function (event) {
+            if (!validatePasswords()) {
+                event.preventDefault();
+            }
+        });
+    })();
+</script>
+{% endblock %}

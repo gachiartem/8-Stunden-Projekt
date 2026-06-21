@@ -1,0 +1,57 @@
+<main class="checkout-page page-container">
+    <section class="checkout-card payment-result-card">
+        <div class="checkout-card-head">
+            <span>✓</span>
+            <h2>Оплата успішна</h2>
+        </div>
+
+        <p class="checkout-payment-text">
+            Дякуємо! Ваше замовлення успішно оплачено та прийнято в обробку.
+        </p>
+
+        {% if order %}
+            <div class="payment-order-info">
+                <div>
+                    <span>Номер замовлення</span>
+                    <strong>№{{ order.id }}</strong>
+                </div>
+
+                <div>
+                    <span>Статус</span>
+                    <strong>{{ order.get_status_display }}</strong>
+                </div>
+
+                <div>
+                    <span>Сума</span>
+                    <strong>{{ order.total_price }} ₴</strong>
+                </div>
+            </div>
+
+            <div class="payment-order-items">
+                {% for item in order.items.all %}
+                    <div class="payment-order-item">
+                        <span>
+                            {{ item.product.name }}
+                            {% if item.size and item.size.size %}
+                                — {{ item.size.size.name }}
+                            {% endif %}
+                        </span>
+
+                        <strong>
+                            {{ item.quantity }} × {{ item.price }} ₴
+                        </strong>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <a href="{% url 'main:index' %}"
+            hx-get="{% url 'main:index' %}"
+            hx-target="#main-content"
+            hx-swap="innerHTML show:window:top"
+            hx-push-url="true"
+            class="success-back-btn">
+                Повернутися до меню
+            </a>
+    </section>
+</main>

@@ -6,12 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}La.pizza — Seafood Pizza{% endblock %}</title>
 
-    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=40">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=42">
     {% block extra_css %}{% endblock %}
 
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
 </head>
-<div id="cart-container"></div>
+
 <body>
     <div id="overlay" class="overlay md-hidden" aria-hidden="true"></div>
 
@@ -68,6 +68,36 @@
                     </a>
                 {% endfor %}
 
+                {% if request.user.is_authenticated %}
+                    <a href="{% url 'users:profile' %}"
+                       hx-get="{% url 'users:profile' %}"
+                       hx-target="#main-content"
+                       hx-select="#main-content"
+                       hx-swap="innerHTML show:window:top"
+                       hx-push-url="true"
+                       class="mobile-nav-link">
+                        Профіль
+                    </a>
+
+                    <a href="{% url 'users:logout' %}"
+                       hx-get="{% url 'users:logout' %}"
+                       hx-target="#main-content"
+                       hx-swap="innerHTML"
+                       class="mobile-nav-link">
+                        Вийти
+                    </a>
+                {% else %}
+                    <a href="{% url 'users:login' %}"
+                       hx-get="{% url 'users:login' %}"
+                       hx-target="#main-content"
+                       hx-select="#main-content"
+                       hx-swap="innerHTML show:window:top"
+                       hx-push-url="true"
+                       class="mobile-nav-link">
+                        Увійти
+                    </a>
+                {% endif %}
+
                 <a href="{% url 'cart:cart_modal' %}"
                    id="mobileCart"
                    class="cart-btn cart-btn--orange"
@@ -117,7 +147,7 @@
                         <path d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15z"/>
                     </svg>
 
-                    <input type="search" name="q" placeholder="Search for pizza, drinks, etc...">
+                    <input type="search" name="q" placeholder="Пошук піци, напоїв...">
 
                     <button type="submit" aria-label="Пошук">
                         <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -151,11 +181,33 @@
                 </nav>
 
                 <div class="header-actions">
-                    <a href="javascript:void(0)" class="profile-link" aria-label="Профіль">
-                        <svg viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M20 21a8 8 0 1 0-16 0M12 13a5 5 0 1 0 0-10 5 5 0 0 0 0 10z"/>
-                        </svg>
-                    </a>
+                    {% if request.user.is_authenticated %}
+                        <a href="{% url 'users:profile' %}"
+                           class="profile-link"
+                           aria-label="Профіль"
+                           hx-get="{% url 'users:profile' %}"
+                           hx-target="#main-content"
+                           hx-select="#main-content"
+                           hx-swap="innerHTML show:window:top"
+                           hx-push-url="true">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M20 21a8 8 0 1 0-16 0M12 13a5 5 0 1 0 0-10 5 5 0 0 0 0 10z"/>
+                            </svg>
+                        </a>
+                    {% else %}
+                        <a href="{% url 'users:login' %}"
+                           class="profile-link"
+                           aria-label="Увійти"
+                           hx-get="{% url 'users:login' %}"
+                           hx-target="#main-content"
+                           hx-select="#main-content"
+                           hx-swap="innerHTML show:window:top"
+                           hx-push-url="true">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M20 21a8 8 0 1 0-16 0M12 13a5 5 0 1 0 0-10 5 5 0 0 0 0 10z"/>
+                            </svg>
+                        </a>
+                    {% endif %}
 
                     <a href="{% url 'cart:cart_modal' %}"
                        id="desktopCart"
@@ -200,7 +252,15 @@
 
         <footer class="site-footer">
             <div class="page-container footer-grid">
-                <a href="{% url 'main:index' %}" class="brand-logo footer-logo">La.<span>pizza</span></a>
+                <a href="{% url 'main:index' %}"
+                   hx-get="{% url 'main:index' %}"
+                   hx-target="#main-content"
+                   hx-swap="innerHTML"
+                   hx-push-url="true"
+                   class="brand-logo footer-logo">
+                    La.<span>pizza</span>
+                </a>
+
                 <p>© 2026 La.pizza. All rights reserved.</p>
 
                 <nav class="footer-links">
@@ -437,8 +497,8 @@
                 }
             });
 
-            document.addEventListener('click', function (e) {
-                const categoryBtn = e.target.closest('.category-btn');
+            document.addEventListener('click', function (event) {
+                const categoryBtn = event.target.closest('.category-btn');
 
                 if (!categoryBtn) return;
 

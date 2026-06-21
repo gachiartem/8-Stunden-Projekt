@@ -1,0 +1,28 @@
+{% extends "main/base.html" %}
+
+{% block title %}Замовлення оформлено — La.pizza{% endblock %}
+
+{% block content %}
+<main class="page-container checkout-page">
+    <section class="checkout-card">
+        <div class="checkout-card-head">
+            <span>✓</span>
+            <h2>Замовлення оформлено</h2>
+        </div>
+
+        <p class="checkout-payment-text">
+            Дякуємо! Ваше замовлення успішно створено. Найближчим часом з вами звʼяжеться менеджер.
+        </p>
+
+        <a href="{% url 'main:index' %}"
+           hx-get="{% url 'main:index' %}"
+           hx-target="#main-content"
+           hx-select="#main-content"
+           hx-swap="innerHTML show:window:top"
+           hx-push-url="true"
+           class="checkout-pay-btn">
+            На головну
+        </a>
+    </section>
+</main>
+{% endblock %}

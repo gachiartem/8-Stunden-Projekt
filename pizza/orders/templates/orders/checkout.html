@@ -1,0 +1,10 @@
+{% extends "main/base.html" %}
+{% load static %}
+
+{% block title %}Оформлення замовлення — La.pizza{% endblock %}
+
+{% block content %}
+<main class="checkout-page page-container">
+    {% include "orders/checkout_content.html" %}
+</main>
+{% endblock content %}

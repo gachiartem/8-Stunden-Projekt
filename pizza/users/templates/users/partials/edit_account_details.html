@@ -1,0 +1,156 @@
+<div class="profile-card-head">
+    <div>
+        <span class="profile-card-kicker">Редагування</span>
+        <h2>Дані акаунта</h2>
+    </div>
+
+    <button type="button"
+            class="profile-edit-btn profile-edit-btn--secondary"
+            hx-get="{% url 'users:account_details' %}"
+            hx-target="#account-details-content"
+            hx-swap="innerHTML">
+        Скасувати
+    </button>
+</div>
+
+<form method="post"
+      class="profile-edit-form"
+      hx-post="{% url 'users:update_account_details' %}"
+      hx-target="#account-details-content"
+      hx-swap="innerHTML">
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+        <div class="auth-error">
+            {{ form.non_field_errors }}
+        </div>
+    {% endif %}
+
+    <div class="auth-grid-2">
+        <div class="auth-field">
+            <label>Імʼя</label>
+            {{ form.first_name }}
+
+            {% if form.first_name.errors %}
+                <div class="auth-error">
+                    {{ form.first_name.errors }}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="auth-field">
+            <label>Прізвище</label>
+            {{ form.last_name }}
+
+            {% if form.last_name.errors %}
+                <div class="auth-error">
+                    {{ form.last_name.errors }}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="auth-field">
+        <label>Email</label>
+        {{ form.email }}
+
+        {% if form.email.errors %}
+            <div class="auth-error">
+                {{ form.email.errors }}
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="auth-field">
+        <label>Телефон</label>
+        {{ form.phone }}
+
+        {% if form.phone.errors %}
+            <div class="auth-error">
+                {{ form.phone.errors }}
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="auth-field">
+        <label>Компанія</label>
+        {{ form.company }}
+
+        {% if form.company.errors %}
+            <div class="auth-error">
+                {{ form.company.errors }}
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="auth-field">
+        <label>Адреса, рядок 1</label>
+        {{ form.address1 }}
+
+        {% if form.address1.errors %}
+            <div class="auth-error">
+                {{ form.address1.errors }}
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="auth-field">
+        <label>Адреса, рядок 2</label>
+        {{ form.address2 }}
+
+        {% if form.address2.errors %}
+            <div class="auth-error">
+                {{ form.address2.errors }}
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="auth-grid-2">
+        <div class="auth-field">
+            <label>Місто</label>
+            {{ form.city }}
+
+            {% if form.city.errors %}
+                <div class="auth-error">
+                    {{ form.city.errors }}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="auth-field">
+            <label>Область / регіон</label>
+            {{ form.province }}
+
+            {% if form.province.errors %}
+                <div class="auth-error">
+                    {{ form.province.errors }}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="auth-field">
+        <label>Поштовий індекс</label>
+        {{ form.postal_code }}
+
+        {% if form.postal_code.errors %}
+            <div class="auth-error">
+                {{ form.postal_code.errors }}
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="profile-edit-actions">
+        <button type="submit" class="auth-btn">
+            Зберегти
+        </button>
+
+        <button type="button"
+                class="auth-btn auth-btn-secondary"
+                hx-get="{% url 'users:account_details' %}"
+                hx-target="#account-details-content"
+                hx-swap="innerHTML">
+            Скасувати
+        </button>
+    </div>
+</form>

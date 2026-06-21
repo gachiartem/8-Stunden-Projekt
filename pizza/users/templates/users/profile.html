@@ -1,0 +1,223 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block content %}
+<main class="profile-page page-container">
+    <section class="profile-hero">
+        <span class="profile-kicker">La.pizza account</span>
+
+        <h1 class="profile-title">
+            Привіт, {{ request.user.first_name }} {{ request.user.last_name }}
+        </h1>
+
+        <p class="profile-subtitle">
+            Тут можна переглянути контактні дані, адресу доставки та швидко перейти до рекомендованих товарів.
+        </p>
+    </section>
+
+    {% if messages %}
+        <div class="profile-messages">
+            {% for message in messages %}
+                <div class="auth-error">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <section class="profile-layout">
+        <aside class="profile-sidebar">
+            <nav class="profile-nav">
+                <a href="{% url 'users:profile' %}"
+                   hx-get="{% url 'users:profile' %}"
+                   hx-target="#main-content"
+                   hx-select="#main-content"
+                   hx-swap="innerHTML show:window:top"
+                   hx-push-url="true"
+                   class="profile-nav-link active">
+                    <span>👤</span>
+                    Акаунт
+                </a>
+
+                <a href="#"
+                   class="profile-nav-link">
+                    <span>🧾</span>
+                    Історія замовлень
+                </a>
+
+                <a href="{% url 'users:logout' %}"
+                   hx-get="{% url 'users:logout' %}"
+                   hx-target="#main-content"
+                   hx-swap="innerHTML"
+                   class="profile-nav-link profile-nav-link--logout">
+                    <span>↪</span>
+                    Вийти
+                </a>
+            </nav>
+        </aside>
+
+        <div class="profile-main" id="profile-main-content">
+            <div class="profile-cards-grid">
+                <article class="profile-card" id="account-details-content">
+                    <div class="profile-card-head">
+                        <div>
+                            <span class="profile-card-kicker">Особисті дані</span>
+                            <h2>Дані акаунта</h2>
+                        </div>
+
+                        <button type="button"
+                                class="profile-edit-btn"
+                                hx-get="{% url 'users:edit_account_details' %}"
+                                hx-target="#account-details-content"
+                                hx-swap="innerHTML">
+                            Редагувати
+                        </button>
+                    </div>
+
+                    <div class="profile-info-list">
+                        <div class="profile-info-row">
+                            <span>Імʼя</span>
+                            <strong>{{ request.user.first_name }} {{ request.user.last_name }}</strong>
+                        </div>
+
+                        <div class="profile-info-row">
+                            <span>Email</span>
+                            <strong>{{ request.user.email }}</strong>
+                        </div>
+
+                        <div class="profile-info-row">
+                            <span>Телефон</span>
+                            <strong>{{ request.user.phone|default:"Не вказано" }}</strong>
+                        </div>
+
+                        <div class="profile-info-row">
+                            <span>Компанія</span>
+                            <strong>{{ request.user.company|default:"Не вказано" }}</strong>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="profile-card">
+                    <div class="profile-card-head">
+                        <div>
+                            <span class="profile-card-kicker">Доставка</span>
+                            <h2>Адреса</h2>
+                        </div>
+                    </div>
+
+                    <div class="profile-address-box">
+                        <p>
+                            {{ request.user.address1|default:"Адреса не вказана" }}
+                            {% if request.user.address2 %}
+                                , {{ request.user.address2 }}
+                            {% endif %}
+                        </p>
+
+                        <p>
+                            {{ request.user.city|default:"Місто не вказано" }}
+                            {% if request.user.province %}
+                                , {{ request.user.province }}
+                            {% endif %}
+                        </p>
+
+                        <p>
+                            {{ request.user.postal_code|default:"Поштовий індекс не вказано" }}
+                        </p>
+                    </div>
+                </article>
+            </div>
+
+            <section class="profile-recommendations">
+                <div class="section-heading">
+                    <h2 class="section-title">Рекомендовані товари</h2>
+
+                    <a href="{% url 'main:catalog_all' %}"
+                       hx-get="{% url 'main:catalog_all' %}"
+                       hx-target="#main-content"
+                       hx-select="#main-content"
+                       hx-swap="innerHTML show:window:top"
+                       hx-push-url="true"
+                       class="view-all-link">
+                        До меню
+                        <span>→</span>
+                    </a>
+                </div>
+
+                <div class="products-grid profile-products-grid">
+                    {% for product in recommended_products %}
+                        <article class="product-card
+                            {% if product.category.slug == 'pizza' or product.category.slug == 'pizzas' or product.category.slug == 'pici' or product.category.name == 'Піци' or product.category.slug == 'combo' or product.category.slug == 'kombo' %}
+                                product-card--large
+                            {% else %}
+                                product-card--compact
+                            {% endif %}">
+
+                            <div class="product-open-area"
+                                 hx-get="{% url 'main:product_detail' product.slug %}"
+                                 hx-target="#main-content"
+                                 hx-select="#main-content"
+                                 hx-swap="innerHTML show:window:top"
+                                 hx-push-url="true">
+
+                                <div class="product-image">
+                                    {% if product.main_image %}
+                                        <img src="{{ product.main_image.url }}" alt="{{ product.name }}">
+                                    {% else %}
+                                        <div class="product-placeholder">🍕</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="product-content">
+                                    <h3>{{ product.name }}</h3>
+
+                                    <p class="product-description">
+                                        {% if product.description %}
+                                            {{ product.description|truncatewords:12 }}
+                                        {% else %}
+                                            Свіжий товар із меню La.pizza.
+                                        {% endif %}
+                                    </p>
+
+                                    <div class="product-rating">
+                                        <span>★★★★★</span>
+
+                                        {% if product.rating_count > 0 %}
+                                            <small>{{ product.average_rating }}</small>
+                                        {% else %}
+                                            <small>Немає оцінок</small>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="product-footer">
+                                <strong>
+                                    {% if product.category.slug == 'pizza' or product.category.slug == 'pizzas' or product.category.slug == 'pici' or product.category.name == 'Піци' %}
+                                        від {{ product.min_price }} ₴
+                                    {% else %}
+                                        {{ product.min_price }} ₴
+                                    {% endif %}
+                                </strong>
+
+                                <button type="button"
+                                        class="product-action-btn"
+                                        hx-get="{% url 'main:product_detail' product.slug %}"
+                                        hx-target="#main-content"
+                                        hx-select="#main-content"
+                                        hx-swap="innerHTML show:window:top"
+                                        hx-push-url="true">
+                                    Обрати
+                                </button>
+                            </div>
+                        </article>
+                    {% empty %}
+                        <div class="empty-products">
+                            <p>Поки що немає рекомендованих товарів.</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </section>
+        </div>
+    </section>
+</main>
+{% endblock %}
