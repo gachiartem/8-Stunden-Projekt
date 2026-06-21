@@ -169,3 +169,29 @@ class CheckoutView(CartMixin, View):
 @login_required(login_url='users:login')
 def order_success(request):
     return render(request, 'orders/success.html')
+
+
+
+@login_required(login_url='users:login')
+def order_history(request):
+    orders = Order.objects.filter(
+        user=request.user
+    ).prefetch_related(
+        'items',
+        'items__product',
+        'items__size',
+        'items__size__size'
+    ).order_by('-created_at')
+
+    context = {
+        'orders': orders,
+    }
+
+    if request.headers.get('HX-Request'):
+        return TemplateResponse(
+            request,
+            'orders/order_history_content.html',
+            context
+        )
+
+    return render(request, 'orders/order_history.html', context)

@@ -1,0 +1,82 @@
+<main class="profile-page page-container">
+    <section class="profile-card order-history-page">
+        <div class="profile-section-head">
+            <div>
+                <span class="profile-kicker">LA.PIZZA ACCOUNT</span>
+                <h1>Історія замовлень</h1>
+            </div>
+
+            <a href="{% url 'users:profile' %}"
+               hx-get="{% url 'users:profile' %}"
+               hx-target="#main-content"
+               hx-select="#main-content"
+               hx-swap="innerHTML show:window:top"
+               hx-push-url="true"
+               class="profile-edit-btn">
+                Назад
+            </a>
+        </div>
+
+        {% if orders %}
+            <div class="order-history-list">
+                {% for order in orders %}
+                    <article class="order-history-card">
+                        <div class="order-history-top">
+                            <div>
+                                <span>Замовлення</span>
+                                <strong>№{{ order.id }}</strong>
+                            </div>
+
+                            <div>
+                                <span>Дата</span>
+                                <strong>{{ order.created_at|date:"d.m.Y H:i" }}</strong>
+                            </div>
+
+                            <div>
+                                <span>Статус</span>
+                                <strong>{{ order.get_status_display }}</strong>
+                            </div>
+
+                            <div>
+                                <span>Сума</span>
+                                <strong class="order-history-price">{{ order.total_price }} ₴</strong>
+                            </div>
+                        </div>
+
+                        <div class="order-history-items">
+                            {% for item in order.items.all %}
+                                <div class="order-history-item">
+                                    <span>
+                                        {{ item.product.name }}
+                                        {% if item.size and item.size.size %}
+                                            — {{ item.size.size.name }}
+                                        {% endif %}
+                                    </span>
+
+                                    <strong>
+                                        {{ item.quantity }} × {{ item.price }} ₴
+                                    </strong>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="profile-empty-state">
+                <h3>Замовлень поки немає</h3>
+                <p>Коли ви оформите перше замовлення, воно зʼявиться тут.</p>
+
+                <a href="{% url 'main:index' %}"
+                   hx-get="{% url 'main:index' %}"
+                   hx-target="#main-content"
+                   hx-select="#main-content"
+                   hx-swap="innerHTML show:window:top"
+                   hx-push-url="true"
+                   class="checkout-pay-btn">
+                    Перейти до меню
+                </a>
+            </div>
+        {% endif %}
+    </section>
+</main>
