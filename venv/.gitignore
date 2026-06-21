@@ -9,5 +9,5 @@ django.log
 security.log
 
 db.sqlite3
-media/
+#media/
 debug.log
